@@ -1,0 +1,237 @@
+fileFormatVersion: 2
+guid: bd9d9e3e2d11008488605a2504fd96ab
+timeCreated: 1444848420
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: background
+    21300002: saucerExplode3
+    21300004: spaceshipThrust
+    21300006: rockBig
+    21300008: rockMed
+    21300010: spaceshipExplode1
+    21300012: saucerExplode1
+    21300014: spaceshipShield
+    21300016: spaceshipShieldThrust
+    21300018: spaceshipExplode2
+    21300020: saucerExplode2
+    21300022: spaceship
+    21300024: saucer
+    21300026: rockSmall
+    21300028: spaceshipBullet
+    21300030: saucerBullet
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 1024
+  textureSettings:
+    filterMode: -1
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings:
+  - buildTarget: iPhone
+    maxTextureSize: 1024
+    textureFormat: -2
+    compressionQuality: 50
+    allowsAlphaSplitting: 0
+  spriteSheet:
+    sprites:
+    - name: background
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: saucerExplode3
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 399
+        width: 149
+        height: 113
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spaceshipThrust
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 402
+        width: 99
+        height: 110
+      alignment: 9
+      pivot: {x: .499999702, y: .758478045}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: rockBig
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 254
+        width: 147
+        height: 143
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: rockMed
+      rect:
+        serializedVersion: 2
+        x: 489
+        y: 319
+        width: 89
+        height: 81
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spaceshipExplode1
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 169
+        width: 145
+        height: 85
+      alignment: 9
+      pivot: {x: .5, y: .685312986}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: saucerExplode1
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 156
+        width: 92
+        height: 91
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spaceshipShield
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 126
+        width: 131
+        height: 126
+      alignment: 9
+      pivot: {x: .500675321, y: .582859814}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spaceshipShieldThrust
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 116
+        width: 131
+        height: 136
+      alignment: 9
+      pivot: {x: .5, y: .613199115}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spaceshipExplode2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 82
+        width: 187
+        height: 81
+      alignment: 9
+      pivot: {x: .498898923, y: .721155226}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: saucerExplode2
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 41
+        width: 113
+        height: 91
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spaceship
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 29
+        width: 99
+        height: 85
+      alignment: 9
+      pivot: {x: .500000298, y: .687235475}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: saucer
+      rect:
+        serializedVersion: 2
+        x: 441
+        y: 23
+        width: 91
+        height: 91
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: rockSmall
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 38
+        width: 43
+        height: 42
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: spaceshipBullet
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 26
+        width: 13
+        height: 54
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: saucerBullet
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 26
+        width: 13
+        height: 54
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
