@@ -35,15 +35,6 @@ public class Rock : MonoBehaviour {
 	void FixedUpdate () {
         gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * speed);
 
-        //if (normMovement)
-        //{
-        //    gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * speed);
-        //}
-        //else
-        //{
-        //    gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * -speed);
-        //}
-
         // Wrapping on sides.
         // When rock goes off left..
         if (transform.localPosition.x < screenSW.x - wrapPadding)
@@ -76,10 +67,13 @@ public class Rock : MonoBehaviour {
             StartCoroutine(DestroyRock());
         }
 
-        //if (other.gameObject.tag == "Rock")
-        //{
-        //    normMovement = !normMovement;
-        //}
+        if (other.gameObject.tag == "Rock")
+        {
+            gameObject.GetComponent<Rigidbody2D>().velocity *= 0.1f;
+            speed *= -0.98f;
+            float rotateValue = Random.Range(-15, 15);
+            transform.Rotate(Vector3.forward * rotateValue);
+        }
     }
 
     public void SetGameManager(GameObject gameManagerObject)
