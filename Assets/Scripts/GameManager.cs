@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour {
     public GameObject spaceshipPrefab;
     public GameObject startingRockPrefab;
     public GameObject saucerPrefab;
+    public GameObject shieldPowerupPrefab;
+    public GameObject bulletPowerupPrefab;
+    public GameObject shipControlPowerupPrefab;
     public GameObject gameUI;
     public GameObject mainUI;
     public GameObject pauseMenuUI;
@@ -19,11 +22,13 @@ public class GameManager : MonoBehaviour {
 
     public int playerLives = 3;
     public int score = 0;
-    public int numStartingRocks = 4;
+    public int numStartingRocks = 2;
 
-    public float saucerSpawnRate = 10f;
+    public float saucerSpawnRate = 5f;
+    public float powerupSpawnRate = 18f;
 
     private GameObject player;
+    private GameObject powerupPrefab;
 
     private Vector3 screenSW;
     private Vector3 screenNE;
@@ -144,6 +149,11 @@ public class GameManager : MonoBehaviour {
                         // This will actually just set the acceleration rate based on the input (1 or 0). Also sets the State in Mechanim.
                         spaceship.Move(translation);
                     }
+                    else if ((translation <= -0.5f) && spaceship.isShipControlActive)
+                    {
+                        spaceship.Move(translation);
+                        Debug.Log("Backwards.");
+                    }
                     else
                     {
                         // No movement keys being pressed calls the Idle() function.
@@ -154,7 +164,7 @@ public class GameManager : MonoBehaviour {
                     if (Input.GetButton("Jump"))
                         spaceship.ShootBullet();
 
-                    if (Input.GetButton("Fire1"))
+                    if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
                     {
                         spaceship.Warp();
                     }
@@ -284,6 +294,7 @@ public class GameManager : MonoBehaviour {
         screenNW = new Vector3(screenNE.x, screenSW.y, 0);
 
         StartCoroutine(SaucerSpawn());
+        StartCoroutine(PowerupSpawn());
 
         yield return null;
     }
@@ -305,6 +316,42 @@ public class GameManager : MonoBehaviour {
         playerLives = startingLives;
 
         yield return null;
+    }
+
+    IEnumerator PowerupSpawn()
+    {
+        for (float timer = powerupSpawnRate; timer >= 0; timer -= Time.deltaTime)
+        {
+            yield return null;
+        }
+
+        float powerupPosX = Random.Range((screenSW.x + 2), (screenNE.x - 2));
+        float powerupPosY = Random.Range((screenSW.y + 2), (screenNE.y - 2));
+
+        int randomPowerUp = Random.Range(0, 3);
+
+        if(randomPowerUp == 0)
+        {
+            GameObject shieldPowerupClone = Instantiate(shieldPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
+            shieldPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            Debug.Log(randomPowerUp);
+        }
+
+        if (randomPowerUp == 1)
+        {
+            GameObject bulletPowerupClone = Instantiate(bulletPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
+            bulletPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            Debug.Log(randomPowerUp);
+        }
+
+        if (randomPowerUp == 2)
+        {
+            GameObject shipControlPowerup = Instantiate(shipControlPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
+            shipControlPowerup.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            Debug.Log(randomPowerUp);
+        }
+
+        StartCoroutine(PowerupSpawn());
     }
 
     void GamePaused()

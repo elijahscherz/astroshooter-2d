@@ -5,7 +5,7 @@ public class Bullet : MonoBehaviour {
 
     public float speed = 1f;
 
-    public enum bulletType { spaceship, saucer };
+    public enum bulletType { spaceship, saucer, spaceshipPowerup };
 
     public bulletType type;
 
@@ -60,6 +60,20 @@ public class Bullet : MonoBehaviour {
                 {
                     other.gameObject.GetComponent<Spaceship>().SpaceshipHit();
                     Destroy(gameObject);
+                }
+
+                break;
+
+            case bulletType.spaceshipPowerup:
+
+                // If it hits either a rock or saucer, kill the gameObject.
+                if (other.gameObject.tag == "Rock")
+                {
+                    other.gameObject.GetComponent<Rock>().RockHit();
+                }
+                else if (other.gameObject.tag == "Saucer")
+                {
+                    other.gameObject.GetComponent<Saucer>().SaucerHit();
                 }
 
                 break;

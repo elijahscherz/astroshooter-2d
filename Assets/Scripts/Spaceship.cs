@@ -4,20 +4,29 @@ using System.Collections;
 public class Spaceship : MonoBehaviour {
 
     public GameObject spaceshipBulletPrefab;
+    public GameObject spaceshipPowerupBulletPrefab;
 
     public AudioClip bulletSfx;
     public AudioClip hitSfx;
     public AudioClip shieldUpSfx;
     public AudioClip shieldDownSfx;
+    public AudioClip powerupGrabbed;
+    public AudioClip powerupWoreOff;
 
     public float speed = 1f;
     public float turnSpeed = 1f;
     public float fireRate = 0.5f;
     public float respawnRate = 1f;
     public float warpCoolDown = 0.5f;
+
     public float shieldTime = 3f;
+    public float laserBulletTime = 5f;
+    public float shipControlTime = 15f;
+
+    public bool isShipControlActive = false;
 
     private GameObject gameManager;
+    private GameObject bulletPrefab;
 
     private Animator animator;
 
@@ -41,6 +50,8 @@ public class Spaceship : MonoBehaviour {
         // Switch "this" to "gameObject"?
         animator = this.GetComponent<Animator>();
         audioSource = this.GetComponent<AudioSource>();
+
+        bulletPrefab = spaceshipBulletPrefab;
 
         // Get the screen bounds coordinates. Bottom left corner = screen SW, and top right = screen NE.
         screenSW = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.localPosition.z));
@@ -86,11 +97,25 @@ public class Spaceship : MonoBehaviour {
         if (hit || shielded)
             return;
 
-        // SaucerBullet?
         if(other.gameObject.tag == "Rock" || other.gameObject.tag == "Saucer")
         {
             StartCoroutine(Hit());
         }
+    }
+
+    public void ActivateShield(float timeToShield)
+    {
+        StartCoroutine(ShieldActive(timeToShield));
+    }
+
+    public void ActivatePowerupBullet()
+    {
+        StartCoroutine(PowerupBullet());
+    }
+
+    public void ActivateShipControl()
+    {
+        StartCoroutine(ShipControl());
     }
 
     public void SpaceshipHit()
@@ -145,10 +170,16 @@ public class Spaceship : MonoBehaviour {
         if (hit)
             return;
 
-        accelRate *= 0.5f;
+        accelRate *= 0.0f;
 
-        // More accurate representation of slowing down.
-        //gameObject.GetComponent<Rigidbody2D>().velocity *= .98f;
+        if(isShipControlActive)
+        {
+            gameObject.GetComponent<Rigidbody2D>().velocity *= 0.8f;
+        }
+        else
+        {
+            gameObject.GetComponent<Rigidbody2D>().velocity *= 0.99f;
+        }
 
         if (shielded)
         {
@@ -170,7 +201,7 @@ public class Spaceship : MonoBehaviour {
         if(Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
-            Instantiate(spaceshipBulletPrefab, transform.localPosition, transform.localRotation);
+            Instantiate(bulletPrefab, transform.localPosition, transform.localRotation);
             audioSource.PlayOneShot(bulletSfx);
         }
     }
@@ -190,6 +221,28 @@ public class Spaceship : MonoBehaviour {
             transform.localPosition = new Vector3(newXPos, newYPos, 0);
             audioSource.PlayOneShot(shieldUpSfx);
         }
+    }
+
+    IEnumerator PowerupBullet()
+    {
+        audioSource.PlayOneShot(powerupGrabbed);
+        bulletPrefab = spaceshipPowerupBulletPrefab;
+
+        yield return new WaitForSeconds(laserBulletTime);
+
+        audioSource.PlayOneShot(powerupWoreOff);
+        bulletPrefab = spaceshipBulletPrefab;
+    }
+
+    IEnumerator ShipControl()
+    {
+        audioSource.PlayOneShot(powerupGrabbed);
+        isShipControlActive = true;
+
+        yield return new WaitForSeconds(shipControlTime);
+
+        audioSource.PlayOneShot(powerupWoreOff);
+        isShipControlActive = false;
     }
 
     IEnumerator Hit()
@@ -220,13 +273,13 @@ public class Spaceship : MonoBehaviour {
         StartCoroutine(ShieldActive());
     }
 
-    IEnumerator ShieldActive()
+    IEnumerator ShieldActive(float shieldingTime = 3f)
     {
         shielded = true;
         animator.SetInteger("State", 2);
         audioSource.PlayOneShot(shieldUpSfx);
 
-        yield return new WaitForSeconds(shieldTime);
+        yield return new WaitForSeconds(shieldingTime);
 
         shielded = false;
         animator.SetInteger("State", 0);
