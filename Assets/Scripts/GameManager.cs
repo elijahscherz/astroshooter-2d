@@ -8,12 +8,13 @@ public class GameManager : MonoBehaviour {
     public GameObject saucerPrefab;
     public GameObject gameUI;
     public GameObject mainUI;
+    public GameObject pauseMenuUI;
     public GameObject gameOverUI;
     public GameObject finalScoreText;
     public GameObject scoreText;
     public GameObject livesText;
 
-    public enum gameState { main, game, gameOver };
+    public enum gameState { main, gamePaused, game, gameOver };
     public gameState state;
 
     public int playerLives = 3;
@@ -34,6 +35,8 @@ public class GameManager : MonoBehaviour {
     private int rockSpawnRadius = 4;
     private int startingScore;
     private int startingLives;
+
+    private bool isPaused;
 
     // Use a script object for easier calling?
 
@@ -57,6 +60,10 @@ public class GameManager : MonoBehaviour {
             case gameState.gameOver:
                 gameOverUI.SetActive(true);
                 break;
+
+            case gameState.gamePaused:
+                pauseMenuUI.SetActive(true);
+                break;
         }
 
         startingScore = score;
@@ -75,6 +82,21 @@ public class GameManager : MonoBehaviour {
                 if(Input.GetKeyDown(KeyCode.Return))
                 {
                     StartCoroutine(GameStart());
+                }
+
+                break;
+
+            case gameState.gamePaused:
+
+                GamePaused();
+
+                if(Input.GetKeyDown(KeyCode.Escape))
+                {
+                    state = gameState.game;
+                }
+                else if(Input.GetKeyDown(KeyCode.Q))
+                {
+                    Application.Quit();
                 }
 
                 break;
@@ -100,6 +122,8 @@ public class GameManager : MonoBehaviour {
 
             case gameState.game:
                 {
+                    GameUnpaused();
+
                     // Checking for player input on both axes. Value of 1 or -1 for each.
                     float translation = Input.GetAxis("Vertical");
                     float rotation = Input.GetAxis("Horizontal");
@@ -133,6 +157,11 @@ public class GameManager : MonoBehaviour {
                     if (Input.GetButton("Fire1"))
                     {
                         spaceship.Warp();
+                    }
+
+                    if(Input.GetKeyDown(KeyCode.Escape))
+                    {
+                            state = gameState.gamePaused;
                     }
 
                     GameObject[] rocks = GameObject.FindGameObjectsWithTag("Rock");
@@ -232,6 +261,7 @@ public class GameManager : MonoBehaviour {
         mainUI.SetActive(false);
         gameUI.SetActive(true);
         gameOverUI.SetActive(false);
+        pauseMenuUI.SetActive(false);
         state = gameState.game;
         player = Instantiate(spaceshipPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         spaceship = player.GetComponent<Spaceship>();
@@ -263,6 +293,7 @@ public class GameManager : MonoBehaviour {
         mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(true);
+        pauseMenuUI.SetActive(false);
         state = gameState.gameOver;
 
         finalScoreText.GetComponent<GUIText>().text = "Final Score: " + score;
@@ -274,5 +305,27 @@ public class GameManager : MonoBehaviour {
         playerLives = startingLives;
 
         yield return null;
+    }
+
+    void GamePaused()
+    {
+        mainUI.SetActive(false);
+        gameUI.SetActive(false);
+        gameOverUI.SetActive(false);
+        pauseMenuUI.SetActive(true);
+
+        Time.timeScale = 0;
+        Cursor.visible = true;
+    }
+
+    void GameUnpaused()
+    {
+        mainUI.SetActive(false);
+        gameUI.SetActive(true);
+        gameOverUI.SetActive(false);
+        pauseMenuUI.SetActive(false);
+
+        Time.timeScale = 1;
+        Cursor.visible = false;
     }
 }

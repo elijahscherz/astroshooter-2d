@@ -82,7 +82,9 @@ public class Saucer : MonoBehaviour {
         animator.SetInteger("State", 1);
         gameManager.GetComponent<GameManager>().UpdateScore(score);
 
-        yield return new WaitForSeconds(0.3f);
+        gameObject.GetComponent<Collider2D>().enabled = false;
+
+        yield return new WaitForSeconds(0.4f);
 
         Destroy(gameObject);
     }
