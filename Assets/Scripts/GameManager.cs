@@ -274,10 +274,10 @@ public class GameManager : MonoBehaviour {
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
         state = gameState.game;
+        UpdateLives (0);
         player = Instantiate(spaceshipPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         spaceship = player.GetComponent<Spaceship>();
         spaceship.SetGameManager(this.gameObject);
-		UpdateLives (0);
         for (int i = 0; i < numStartingRocks; i++)
         {
             float rockPosX = rockSpawnRadius * Mathf.Cos(Random.Range(0, 360));
