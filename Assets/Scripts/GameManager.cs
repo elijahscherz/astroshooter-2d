@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
     public GameObject shieldPowerupPrefab;
     public GameObject bulletPowerupPrefab;
     public GameObject shipControlPowerupPrefab;
+    public GameObject doubleShotPowerupPrefab;
     public GameObject gameUI;
     public GameObject mainUI;
     public GameObject pauseMenuUI;
@@ -152,7 +153,6 @@ public class GameManager : MonoBehaviour {
                     else if ((translation <= -0.5f) && spaceship.isShipControlActive)
                     {
                         spaceship.Move(translation);
-                        Debug.Log("Backwards.");
                     }
                     else
                     {
@@ -328,27 +328,30 @@ public class GameManager : MonoBehaviour {
         float powerupPosX = Random.Range((screenSW.x + 2), (screenNE.x - 2));
         float powerupPosY = Random.Range((screenSW.y + 2), (screenNE.y - 2));
 
-        int randomPowerUp = Random.Range(0, 3);
+        int randomPowerUp = Random.Range(0, 4);
 
         if(randomPowerUp == 0)
         {
             GameObject shieldPowerupClone = Instantiate(shieldPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             shieldPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
-            Debug.Log(randomPowerUp);
         }
 
         if (randomPowerUp == 1)
         {
             GameObject bulletPowerupClone = Instantiate(bulletPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             bulletPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
-            Debug.Log(randomPowerUp);
         }
 
         if (randomPowerUp == 2)
         {
-            GameObject shipControlPowerup = Instantiate(shipControlPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
-            shipControlPowerup.GetComponent<Powerup>().SetGameManager(this.gameObject);
-            Debug.Log(randomPowerUp);
+            GameObject shipControlPowerupClone = Instantiate(shipControlPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
+            shipControlPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+        }
+
+        if (randomPowerUp == 3)
+        {
+            GameObject doubleShotPowerupClone = Instantiate(doubleShotPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
+            doubleShotPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
 
         StartCoroutine(PowerupSpawn());

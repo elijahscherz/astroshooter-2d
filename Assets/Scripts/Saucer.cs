@@ -74,6 +74,8 @@ public class Saucer : MonoBehaviour {
 
         Instantiate(saucerBulletPrefab, transform.localPosition, transform.localRotation);
         audioSource.PlayOneShot(bulletSfx);
+
+        StartCoroutine(Attack());
     }
 
     IEnumerator Hit()

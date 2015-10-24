@@ -7,7 +7,7 @@ public class Powerup : MonoBehaviour {
 
     public int score;
 
-    public enum powerupType { shieldPowerup, laserPowerup, shipControlPowerup };
+    public enum powerupType { shieldPowerup, laserPowerup, shipControlPowerup, doubleShotPowerup };
 
     public powerupType type;
 
@@ -52,6 +52,16 @@ public class Powerup : MonoBehaviour {
                 if (other.gameObject.tag == "Player")
                 {
                     other.gameObject.GetComponent<Spaceship>().ActivateShipControl();
+                    Destroy(gameObject);
+                }
+
+                break;
+
+            case powerupType.doubleShotPowerup:
+
+                if(other.gameObject.tag == "Player")
+                {
+                    other.gameObject.GetComponent<Spaceship>().ActivateDoubleShot();
                     Destroy(gameObject);
                 }
 

@@ -22,8 +22,10 @@ public class Spaceship : MonoBehaviour {
     public float shieldTime = 3f;
     public float laserBulletTime = 5f;
     public float shipControlTime = 15f;
+    public float doubleShotTime = 8f;
 
     public bool isShipControlActive = false;
+    public bool isDoubleShotActive = false;
 
     private GameObject gameManager;
     private GameObject bulletPrefab;
@@ -105,6 +107,9 @@ public class Spaceship : MonoBehaviour {
 
     public void ActivateShield(float timeToShield)
     {
+        if (shielded)
+            return;
+
         StartCoroutine(ShieldActive(timeToShield));
     }
 
@@ -118,8 +123,16 @@ public class Spaceship : MonoBehaviour {
         StartCoroutine(ShipControl());
     }
 
+    public void ActivateDoubleShot()
+    {
+        StartCoroutine(DoubleShot());
+    }
+
     public void SpaceshipHit()
     {
+        if (shielded)
+            return;
+
         StartCoroutine(Hit());
     }
 
@@ -152,7 +165,14 @@ public class Spaceship : MonoBehaviour {
         if (hit)
             return;
 
-        accelRate = accel;
+        if(isShipControlActive)
+        {
+            accelRate = (accel * 1.5f);
+        }
+        else
+        {
+            accelRate = accel;
+        }
 
         if(shielded)
         {
@@ -201,7 +221,19 @@ public class Spaceship : MonoBehaviour {
         if(Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
-            Instantiate(bulletPrefab, transform.localPosition, transform.localRotation);
+
+            if(isDoubleShotActive)
+            {
+                GameObject bulletCloneLeft = Instantiate(bulletPrefab, transform.localPosition, transform.localRotation) as GameObject;
+                bulletCloneLeft.transform.Rotate(Vector3.back * 30);
+
+                GameObject bulletCloneRight = Instantiate(bulletPrefab, transform.localPosition, transform.localRotation) as GameObject;
+                bulletCloneRight.transform.Rotate(Vector3.back * -30);
+            }
+            else
+            {
+                Instantiate(bulletPrefab, transform.localPosition, transform.localRotation);
+            }
             audioSource.PlayOneShot(bulletSfx);
         }
     }
@@ -243,6 +275,17 @@ public class Spaceship : MonoBehaviour {
 
         audioSource.PlayOneShot(powerupWoreOff);
         isShipControlActive = false;
+    }
+
+    IEnumerator DoubleShot()
+    {
+        audioSource.PlayOneShot(powerupGrabbed);
+        isDoubleShotActive = true;
+
+        yield return new WaitForSeconds(doubleShotTime);
+
+        audioSource.PlayOneShot(powerupWoreOff);
+        isDoubleShotActive = false;
     }
 
     IEnumerator Hit()
