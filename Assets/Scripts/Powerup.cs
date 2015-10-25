@@ -7,7 +7,7 @@ public class Powerup : MonoBehaviour {
 
     public int score;
 
-    public enum powerupType { shieldPowerup, laserPowerup, shipControlPowerup, doubleShotPowerup, addLifePowerup };
+    public enum powerupType { shieldPowerup, laserPowerup, shipControlPowerup, doubleShotPowerup };
 
     public powerupType type;
 
@@ -66,15 +66,6 @@ public class Powerup : MonoBehaviour {
                 }
 
                 break;
-			case powerupType.addLifePowerup:
-			
-				if (other.gameObject.tag == "Player")
-				{
-					gameManager.GetComponent<GameManager>().UpdateLives(-1);
-					Destroy(gameObject);
-				}
-			
-			break;
         }
     }
 
@@ -83,3 +74,4 @@ public class Powerup : MonoBehaviour {
         gameManager = gameManagerObject;
     }
 }
+
