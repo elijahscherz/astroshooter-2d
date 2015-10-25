@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour {
     public GameObject bulletPowerupPrefab;
     public GameObject shipControlPowerupPrefab;
     public GameObject doubleShotPowerupPrefab;
-	public GameObject addLifePowerupPrefab;
+    public GameObject addLifePowerupPrefab;
     public GameObject gameUI;
     public GameObject mainUI;
     public GameObject pauseMenuUI;
