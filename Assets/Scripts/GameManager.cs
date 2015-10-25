@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour {
     public GameObject bulletPowerupPrefab;
     public GameObject shipControlPowerupPrefab;
     public GameObject doubleShotPowerupPrefab;
-    public GameObject addLifePowerupPrefab;
     public GameObject gameUI;
     public GameObject mainUI;
     public GameObject pauseMenuUI;
@@ -330,7 +329,7 @@ public class GameManager : MonoBehaviour {
         float powerupPosX = Random.Range((screenSW.x + 2), (screenNE.x - 2));
         float powerupPosY = Random.Range((screenSW.y + 2), (screenNE.y - 2));
 
-        int randomPowerUp = Random.Range(0, 5);
+        int randomPowerUp = Random.Range(0, 4);
 
         if(randomPowerUp == 0)
         {
@@ -355,11 +354,6 @@ public class GameManager : MonoBehaviour {
             GameObject doubleShotPowerupClone = Instantiate(doubleShotPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             doubleShotPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
-		if (randomPowerUp == 4)
-		{
-			GameObject addLifePowerupClone = Instantiate(addLifePowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
-			addLifePowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
-		}
 
         StartCoroutine(PowerupSpawn());
     }
