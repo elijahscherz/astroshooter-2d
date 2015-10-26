@@ -10,7 +10,11 @@ public class GameManager : MonoBehaviour {
     public GameObject bulletPowerupPrefab;
     public GameObject shipControlPowerupPrefab;
     public GameObject doubleShotPowerupPrefab;
+<<<<<<< HEAD
     public GameObject addLifePowerupPrefab;
+=======
+	public GameObject addLifePowerupPrefab;
+>>>>>>> origin/master
     public GameObject gameUI;
     public GameObject mainUI;
     public GameObject pauseMenuUI;
@@ -211,6 +215,7 @@ public class GameManager : MonoBehaviour {
         if(playerLives < 1)
         {
             StartCoroutine(GameEnd());
+
         }
     }
 
@@ -272,12 +277,15 @@ public class GameManager : MonoBehaviour {
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
         state = gameState.game;
+<<<<<<< HEAD
         UpdateScore(0);
         UpdateLives(0);
+=======
+        UpdateLives (0);
+>>>>>>> origin/master
         player = Instantiate(spaceshipPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         spaceship = player.GetComponent<Spaceship>();
         spaceship.SetGameManager(this.gameObject);
-
         for (int i = 0; i < numStartingRocks; i++)
         {
             float rockPosX = rockSpawnRadius * Mathf.Cos(Random.Range(0, 360));
@@ -354,6 +362,11 @@ public class GameManager : MonoBehaviour {
             GameObject doubleShotPowerupClone = Instantiate(doubleShotPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             doubleShotPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
+		if (randomPowerUp == 4)
+		{
+			GameObject addLifePowerupClone = Instantiate(addLifePowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
+			addLifePowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+		}
 
         if (randomPowerUp == 4)
         {

@@ -66,6 +66,7 @@ public class Powerup : MonoBehaviour {
                 }
 
                 break;
+<<<<<<< HEAD
 
             case powerupType.addLifePowerup:
 
@@ -76,6 +77,17 @@ public class Powerup : MonoBehaviour {
                 }
 
                 break;
+=======
+			case powerupType.addLifePowerup:
+			
+				if (other.gameObject.tag == "Player")
+				{
+					gameManager.GetComponent<GameManager>().UpdateLives(-1);
+					Destroy(gameObject);
+				}
+			
+			break;
+>>>>>>> origin/master
         }
     }
 
@@ -84,4 +96,3 @@ public class Powerup : MonoBehaviour {
         gameManager = gameManagerObject;
     }
 }
-
