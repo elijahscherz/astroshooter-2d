@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
     public GameObject bulletPowerupPrefab;
     public GameObject shipControlPowerupPrefab;
     public GameObject doubleShotPowerupPrefab;
+    public GameObject addLifePowerupPrefab;
     public GameObject gameUI;
     public GameObject mainUI;
     public GameObject pauseMenuUI;
@@ -43,8 +44,6 @@ public class GameManager : MonoBehaviour {
     private int startingLives;
 
     private bool isPaused;
-
-    // Use a script object for easier calling?
 
 	// Use this for initialization
 	void Start () {
@@ -273,6 +272,8 @@ public class GameManager : MonoBehaviour {
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
         state = gameState.game;
+        UpdateScore(0);
+        UpdateLives(0);
         player = Instantiate(spaceshipPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         spaceship = player.GetComponent<Spaceship>();
         spaceship.SetGameManager(this.gameObject);
@@ -328,7 +329,7 @@ public class GameManager : MonoBehaviour {
         float powerupPosX = Random.Range((screenSW.x + 2), (screenNE.x - 2));
         float powerupPosY = Random.Range((screenSW.y + 2), (screenNE.y - 2));
 
-        int randomPowerUp = Random.Range(0, 4);
+        int randomPowerUp = Random.Range(0, 5);
 
         if(randomPowerUp == 0)
         {
@@ -352,6 +353,12 @@ public class GameManager : MonoBehaviour {
         {
             GameObject doubleShotPowerupClone = Instantiate(doubleShotPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             doubleShotPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+        }
+
+        if (randomPowerUp == 4)
+        {
+            GameObject addLifePowerupClone = Instantiate(addLifePowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
+            addLifePowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
 
         StartCoroutine(PowerupSpawn());
