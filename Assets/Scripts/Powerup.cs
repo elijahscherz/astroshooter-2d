@@ -42,6 +42,7 @@ public class Powerup : MonoBehaviour {
                 if (other.gameObject.tag == "Player")
                 {
                     other.gameObject.GetComponent<Spaceship>().ActivatePowerupBullet();
+                    gameManager.GetComponent<GameManager>().UpdateScore(score);
                     Destroy(gameObject);
                 }
 
@@ -52,6 +53,7 @@ public class Powerup : MonoBehaviour {
                 if (other.gameObject.tag == "Player")
                 {
                     other.gameObject.GetComponent<Spaceship>().ActivateShipControl();
+                    gameManager.GetComponent<GameManager>().UpdateScore(score);
                     Destroy(gameObject);
                 }
 
@@ -62,6 +64,7 @@ public class Powerup : MonoBehaviour {
                 if(other.gameObject.tag == "Player")
                 {
                     other.gameObject.GetComponent<Spaceship>().ActivateDoubleShot();
+                    gameManager.GetComponent<GameManager>().UpdateScore(score);
                     Destroy(gameObject);
                 }
 
@@ -71,7 +74,7 @@ public class Powerup : MonoBehaviour {
 
                 if (other.gameObject.tag == "Player")
                 {
-                    gameManager.GetComponent<GameManager>().UpdateLives(-1);
+                    other.gameObject.GetComponent<Spaceship>().ActivateLife();
                     Destroy(gameObject);
                 }
 

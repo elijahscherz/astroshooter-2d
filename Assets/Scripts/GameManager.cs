@@ -3,6 +3,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
+    // Prefab variable GameObjects set in the Unity interface later.
     public GameObject spaceshipPrefab;
     public GameObject startingRockPrefab;
     public GameObject saucerPrefab;
@@ -11,6 +12,8 @@ public class GameManager : MonoBehaviour {
     public GameObject shipControlPowerupPrefab;
     public GameObject doubleShotPowerupPrefab;
     public GameObject addLifePowerupPrefab;
+
+    // UI element GameObjects also to be set in Unity interface, then used here of course.
     public GameObject gameUI;
     public GameObject mainUI;
     public GameObject pauseMenuUI;
@@ -19,9 +22,13 @@ public class GameManager : MonoBehaviour {
     public GameObject scoreText;
     public GameObject livesText;
 
+    // This enum stores different possible states of the game, we can then set these and do different
+    // things depending on what state we are currently in...
     public enum gameState { main, gamePaused, game, gameOver };
+    // .. using this variable.
     public gameState state;
 
+    // Starting values for game elements.
     public int playerLives = 3;
     public int score = 0;
     public int numStartingRocks = 2;
@@ -30,28 +37,33 @@ public class GameManager : MonoBehaviour {
     public float powerupSpawnRate = 18f;
 
     private GameObject player;
-    private GameObject powerupPrefab;
 
     private Vector3 screenSW;
     private Vector3 screenNE;
     private Vector3 screenSE;
     private Vector3 screenNW;
 
+    // Used for calling to the player's spaceship.
     private Spaceship spaceship;
 
+    // The radius from the origin that the rocks can spawn.
     private int rockSpawnRadius = 4;
     private int startingScore;
     private int startingLives;
 
     private bool isPaused;
 
-	// Use this for initialization
+	// Use this for initialization.
 	void Start () {
 
+        // These four lines set the UI elements to hidden when the game first starts.
         mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(false);
+        pauseMenuUI.SetActive(false);
 
+        // These cases allow for leniency when activating UI that applies specifically
+        // to the state during the start of this script.
         switch(state)
         {
             case gameState.main:
@@ -77,7 +89,7 @@ public class GameManager : MonoBehaviour {
         UpdateLives(0);
 	}
 	
-	// Update is called once per frame
+	// Update is called once per frame.
 	void Update () {
 
         switch(state)
@@ -97,6 +109,7 @@ public class GameManager : MonoBehaviour {
 
                 if(Input.GetKeyDown(KeyCode.Escape))
                 {
+                    // Resumes the game, by setting it back to the "game" gameState.
                     state = gameState.game;
                 }
                 else if(Input.GetKeyDown(KeyCode.Q))
@@ -116,7 +129,13 @@ public class GameManager : MonoBehaviour {
                         Destroy(rocksToDestroy[i]);
                     }
 
-                    StartCoroutine(GameStart());
+                    GameObject[] powerupsToDestroy = GameObject.FindGameObjectsWithTag("Powerup");
+                    for (int i = 0; i < powerupsToDestroy.Length; i++)
+                    {
+                        Destroy(powerupsToDestroy[i]);
+                    }
+
+                        StartCoroutine(GameStart());
                 }
                 else if (Input.GetKeyDown(KeyCode.Escape))
                 {

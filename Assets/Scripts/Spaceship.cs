@@ -128,6 +128,12 @@ public class Spaceship : MonoBehaviour {
         StartCoroutine(DoubleShot());
     }
 
+    public void ActivateLife()
+    {
+        audioSource.PlayOneShot(powerupGrabbed);
+        gameManager.GetComponent<GameManager>().UpdateLives(-1);
+    }
+
     public void SpaceshipHit()
     {
         if (shielded)
@@ -225,10 +231,10 @@ public class Spaceship : MonoBehaviour {
             if(isDoubleShotActive)
             {
                 GameObject bulletCloneLeft = Instantiate(bulletPrefab, transform.localPosition, transform.localRotation) as GameObject;
-                bulletCloneLeft.transform.Rotate(Vector3.back * 30);
+                bulletCloneLeft.transform.Rotate(Vector3.back * 15);
 
                 GameObject bulletCloneRight = Instantiate(bulletPrefab, transform.localPosition, transform.localRotation) as GameObject;
-                bulletCloneRight.transform.Rotate(Vector3.back * -30);
+                bulletCloneRight.transform.Rotate(Vector3.back * -15);
             }
             else
             {
