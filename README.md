@@ -8,7 +8,7 @@ Super huge thanks to [Kenney](http://www.kenney.nl/) for the amazing art assets 
 - Customizable ships.
 - Standard ships that can be used.
 - More enemies.
-- Powerups (CHECK!)
+- Pickup Powerups (CHECK!)
 - An powerup system based on the current score.
 - A difficulty system based on the score and time played.
 - Movement system based on mouse input?
