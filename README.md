@@ -1,6 +1,6 @@
 # astroshooter-2d
 
-Unity2D using C# :: space shooter.
+Unity2D using C# -- space shooter.
 
 Super huge thanks to [Kenney](http://www.kenney.nl/) for the amazing art assets that he put out for free use. It makes game programming and design a much quicker process.
 
