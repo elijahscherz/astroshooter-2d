@@ -94,6 +94,7 @@ public class GameManager : MonoBehaviour {
 
         switch(state)
         {
+            // While in the gameState "main" execute this code..
             case gameState.main:
 
                 if(Input.GetKeyDown(KeyCode.Return))
@@ -103,6 +104,7 @@ public class GameManager : MonoBehaviour {
 
                 break;
 
+            // While in the gameState "gamePaused" execute this code..
             case gameState.gamePaused:
 
                 GamePaused();
@@ -119,22 +121,34 @@ public class GameManager : MonoBehaviour {
 
                 break;
 
+            // When the game ends (basically), run these lines of code..
             case gameState.gameOver:
 
+                // When the player strikes Enter/Return to restart the game. (Previously at highscore screen.)
                 if (Input.GetKeyDown(KeyCode.Return))
                 {
+                    // Creates an array of the leftover Rocks in the scene, and destroys them. Finds using Unity Tags.
                     GameObject[] rocksToDestroy = GameObject.FindGameObjectsWithTag("Rock");
+
+                    /* Starting int "i" equals zero (represents the current Rock in the array) and until
+                     that int is at a value less than the length of the rocksToDestroy array, destroy the
+                     current Rock in the for loop. */
+                    
                     for(int i = 0; i < rocksToDestroy.Length; i++)
                     {
                         Destroy(rocksToDestroy[i]);
                     }
 
+                    // Creates an array just like the rocksToDestroy array, but for powerups.
                     GameObject[] powerupsToDestroy = GameObject.FindGameObjectsWithTag("Powerup");
+
+                    // The for loop also functions in the same fashion.
                     for (int i = 0; i < powerupsToDestroy.Length; i++)
                     {
                         Destroy(powerupsToDestroy[i]);
                     }
-
+                        
+                        // When all that is finally done getting cleaned up, restart the game.
                         StartCoroutine(GameStart());
                 }
                 else if (Input.GetKeyDown(KeyCode.Escape))
@@ -146,6 +160,7 @@ public class GameManager : MonoBehaviour {
 
             case gameState.game:
                 {
+                    // Resumes the timeScale, and disables the pauseUI.
                     GameUnpaused();
 
                     // Checking for player input on both axes. Value of 1 or -1 for each.
@@ -165,11 +180,12 @@ public class GameManager : MonoBehaviour {
 
                     if (translation >= 0.5f) // When up arrow is pushed.
                     {
-                        // This will actually just set the acceleration rate based on the input (1 or 0). Also sets the State in Mechanim.
+                        // This will actually just set the acceleration rate based on the input (1 or 0).
+                        // Also sets the State in Mechanim.
                         spaceship.Move(translation);
                     }
-                    else if ((translation <= -0.5f) && spaceship.isShipControlActive)
-                    {
+                    else if ((translation <= -0.5f) && spaceship.isShipControlActive) // When the down arrow is pushed and the
+                    {                                                                 // ship control powerup is active.
                         spaceship.Move(translation);
                     }
                     else
@@ -182,19 +198,25 @@ public class GameManager : MonoBehaviour {
                     if (Input.GetButton("Jump"))
                         spaceship.ShootBullet();
 
+                    // We support warping with the Ctrl key here at GlitchedPixel Inc..
                     if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
                     {
                         spaceship.Warp();
                     }
 
+                    // We also support pausing of the game, give us an award. (Please.. heh.)
                     if(Input.GetKeyDown(KeyCode.Escape))
                     {
                             state = gameState.gamePaused;
                     }
 
+                    // This array and following "if" statement and "for" loop keep track of the Rocks in the scene.
                     GameObject[] rocks = GameObject.FindGameObjectsWithTag("Rock");
+
+                    // If there are no Rocks left...
                     if (rocks.Length <= 0)
                     {
+                        // Spawn more! Same as the initial amount. Creates neverending gameplay.
                         for (int i = 0; i < numStartingRocks; i++)
                         {
                             float rockPosX = rockSpawnRadius * Mathf.Cos(Random.Range(0, 360));
@@ -211,39 +233,52 @@ public class GameManager : MonoBehaviour {
         }
 	}
 
+    // While the ship / player is hidden after dying, we move them back to center. Sneaky.
     public void ResetShip()
     {
         player.transform.localPosition = new Vector3(0, 0, 0);
     }
 
+    // Available to call to update the current score of the game. The int passed is what is added.
     public void UpdateScore(int scoreToAdd)
     {
         score += scoreToAdd;
+
+        // Gets the GUIText component and updates it.
         scoreText.GetComponent<GUIText>().text = "Score: " + score;
     }
 
+    // Available to call to update the current lives the player has.
+    // Unlike UpdateScore() this is the number of lives lost.
     public void UpdateLives(int livesLost)
     {
         playerLives -= livesLost;
+
+        // Gets the GUIText component and updates it.
         livesText.GetComponent<GUIText>().text = "Lives: " + playerLives;
 
+        // This keeps track of player lives, if less than one.. Game over.
         if(playerLives < 1)
         {
             StartCoroutine(GameEnd());
         }
     }
 
+    // Function to constantly spawn Saucers into the game.
     IEnumerator SaucerSpawn()
     {
+        // Wait before next spawn...
         for(float timer = saucerSpawnRate; timer >= 0; timer -= Time.deltaTime)
         {
             yield return null;
         }
 
+        // We pick a random corner of the screen..
         int cornerSelection = Random.Range(0, 4);
 
         Vector3 saucerSpawnPos = new Vector3(0,0,0);
 
+        // Then depending on the random choice, we spawn the next Saucer there.
         if(cornerSelection == 0)
         {
             saucerSpawnPos = new Vector3(screenSW.x, screenSW.y, 0);
@@ -261,9 +296,11 @@ public class GameManager : MonoBehaviour {
             saucerSpawnPos = new Vector3(screenNW.x, screenNW.y, 0);
         }
 
+        // Instantiate a clone object at the previously selected corner.
         GameObject saucerClone = Instantiate(saucerPrefab, saucerSpawnPos, Quaternion.identity) as GameObject;
         saucerClone.GetComponent<Saucer>().SetGameManager(this.gameObject);
 
+        // Then depending on the corner, we rotate the Saucer to prevent it from shooting off into space!
         if (cornerSelection == 0)
         {
             saucerClone.transform.Rotate(Vector3.back * Random.Range(0, 90));
@@ -281,60 +318,88 @@ public class GameManager : MonoBehaviour {
             saucerClone.transform.Rotate(Vector3.back * Random.Range(270, 360));
         }
 
+        // Restart the Coroutine that is already running so Saucers are always respawning.
         StartCoroutine(SaucerSpawn());
     }
     
     IEnumerator GameStart()
     {
+        // Set the proper UI's to display.
         mainUI.SetActive(false);
         gameUI.SetActive(true);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
+
+        // Set our correct game state.
         state = gameState.game;
+
+        // Update the score and lives in the beginning of the game, or on restart.
         UpdateScore(0);
         UpdateLives(0);
+
+        // Spawn the player!
         player = Instantiate(spaceshipPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+
+        // We use a Spaceship object for easier calling to the player's spaceship.
         spaceship = player.GetComponent<Spaceship>();
+
+        // Set the GameManager to this object so we can keep a leash on it.
         spaceship.SetGameManager(this.gameObject);
 
+        // "for" loop that spawns the number of Rocks you set into the scene.
         for (int i = 0; i < numStartingRocks; i++)
         {
+            // Cosine and sine always output a value from [-1, 1] inclusive.
+            // We use that value to generate a random position that is always around the rockSpawnRadius.
             float rockPosX = rockSpawnRadius * Mathf.Cos(Random.Range(0, 360));
             float rockPosy = rockSpawnRadius * Mathf.Sin(Random.Range(0, 360));
 
+            // Spawn the Rock prefab!
             GameObject rockClone = Instantiate(startingRockPrefab, new Vector3(rockPosX, rockPosy, 0), Quaternion.identity) as GameObject;
 
+            // Set the GameManager of this object to the GameManager in the game, so we can control this Rock.
             rockClone.GetComponent<Rock>().SetGameManager(this.gameObject);
         }
 
-        // ScreenSE and ScreenNW are incorrectly named. Change in the future.
+        // TODO: ScreenSE and ScreenNW are incorrectly named. Change in the future.
         screenSW = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, Camera.main.transform.localPosition.z));
         screenNE = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.localPosition.z));
         screenSE = new Vector3(screenSW.x, screenNE.y, 0);
         screenNW = new Vector3(screenNE.x, screenSW.y, 0);
 
+        // Begin the Coroutines that add a large part of the functionality to the game.
         StartCoroutine(SaucerSpawn());
         StartCoroutine(PowerupSpawn());
 
+        // Since Coroutines always need a "yield return" to know when they are done..
         yield return null;
     }
 
     IEnumerator GameEnd()
     {
+        // Enable / Disable needed UI elements.
         mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(true);
         pauseMenuUI.SetActive(false);
+
+        // Set the game state to the game over part of the game.
         state = gameState.gameOver;
 
+        // Update the final score with the current score.
         finalScoreText.GetComponent<GUIText>().text = "Final Score: " + score;
 
+        // Destroy this instance of "player" a new one will be spawned on restart.
         Destroy(player);
+
+        // Stop Coroutines that are currently running, SaucerSpawn() and PowerupSpawn() included.
         StopAllCoroutines();
 
+        // Reset the score values to the original values. They are updated later when GameStart() is called.
         score = startingScore;
         playerLives = startingLives;
 
+        // Yield return to end the Coroutine.
         yield return null;
     }
 
@@ -350,58 +415,73 @@ public class GameManager : MonoBehaviour {
 
         int randomPowerUp = Random.Range(0, 5);
 
+        // These next lines instantiate a prefab based on the random choice made by randomPowerUp.
+        // Shield Powerup
         if(randomPowerUp == 0)
         {
             GameObject shieldPowerupClone = Instantiate(shieldPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             shieldPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
 
+        // Enhanced Bullet Powerup
         if (randomPowerUp == 1)
         {
             GameObject bulletPowerupClone = Instantiate(bulletPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             bulletPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
 
+        // Ship Control Powerup
         if (randomPowerUp == 2)
         {
             GameObject shipControlPowerupClone = Instantiate(shipControlPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             shipControlPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
 
+        // Double-Shot Powerup
         if (randomPowerUp == 3)
         {
             GameObject doubleShotPowerupClone = Instantiate(doubleShotPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             doubleShotPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
 
+        // Life Powerup
         if (randomPowerUp == 4)
         {
             GameObject addLifePowerupClone = Instantiate(addLifePowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
             addLifePowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
         }
 
+        // Like the Saucers spawning, we need powerups to continually spawn.
         StartCoroutine(PowerupSpawn());
     }
 
     void GamePaused()
     {
+        // Set the correct UIs to enabled or disabled.
         mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(true);
 
+        // This stops the game running by setting the time passing to zero.
         Time.timeScale = 0;
+
+        // Allows you to see the cursor in the game window.
         Cursor.visible = true;
     }
 
     void GameUnpaused()
     {
+        // Set the correct UIs to visible or hidden.
         mainUI.SetActive(false);
         gameUI.SetActive(true);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
 
+        // Set time scale to one, which is normal time.
         Time.timeScale = 1;
+
+        // Hide the cursor while normal game is running.
         Cursor.visible = false;
     }
 }
