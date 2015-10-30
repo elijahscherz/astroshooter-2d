@@ -2,7 +2,6 @@
 
 ## Coding | Programming
 - Spaceship upgrading, standard spaceships to choose from. (Differences based on size, mass, speed, etc.)
-- Highscore, with saving ability.
 - Input: based on mouse, rotating the player to that input, allowing for shooting with mouse?
 - Bonus stages where you have to navigate through a moving asteroid field?
 - Multiplayer support?:)
