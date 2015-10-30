@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -252,7 +253,8 @@ public class GameManager : MonoBehaviour {
         {
             score += scoreToAdd;
             highscore = score;
-            highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
+            //highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
+            highscoreText.GetComponent<Text>().text = "Highscore: " + highscore;
         }
         else
         {
@@ -260,7 +262,8 @@ public class GameManager : MonoBehaviour {
         }
 
         // Gets the GUIText component and updates it.
-        scoreText.GetComponent<GUIText>().text = "Score: " + score;
+        //scoreText.GetComponent<GUIText>().text = "Score: " + score;
+        scoreText.GetComponent<Text>().text = "Score: " + score;
     }
 
     // Available to call to update the current lives the player has.
@@ -270,7 +273,8 @@ public class GameManager : MonoBehaviour {
         playerLives -= livesLost;
 
         // Gets the GUIText component and updates it.
-        livesText.GetComponent<GUIText>().text = "Lives: " + playerLives;
+        //livesText.GetComponent<GUIText>().text = "Lives: " + playerLives;
+        livesText.GetComponent<Text>().text = "Lives: " + playerLives;
 
         // This keeps track of player lives, if less than one.. Game over.
         if(playerLives < 1)
@@ -283,7 +287,8 @@ public class GameManager : MonoBehaviour {
     {
         Load();
 
-        highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
+        //highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
+        highscoreText.GetComponent<Text>().text = "Highscore: " + highscore;
     }
 
     public void Save()
@@ -437,7 +442,8 @@ public class GameManager : MonoBehaviour {
         state = gameState.gameOver;
 
         // Update the final score with the current score.
-        finalScoreText.GetComponent<GUIText>().text = "Final Score: " + score;
+        //finalScoreText.GetComponent<GUIText>().text = "Final Score: " + score;
+        finalScoreText.GetComponent<Text>().text = "Final Score: " + score;
 
         // Destroy this instance of "player" a new one will be spawned on restart.
         Destroy(player);
