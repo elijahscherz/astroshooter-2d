@@ -14,4 +14,11 @@ Super huge thanks to [Kenney](http://www.kenney.nl/) for the amazing art assets 
 - Movement system based on mouse input?
 
 ## Coming Soon
-- Highscore tracking and saving.
+- Highscore tracking and saving. (CHECK!)
+- Main Menu
+- Consistent UI elements, regarding position on screen.
+
+## Recently Implemented
+- Cool Powerups
+- Highscore Saving
+- Shield Animations
