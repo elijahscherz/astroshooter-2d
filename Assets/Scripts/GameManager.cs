@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 public class GameManager : MonoBehaviour {
 
@@ -21,6 +24,7 @@ public class GameManager : MonoBehaviour {
     public GameObject finalScoreText;
     public GameObject scoreText;
     public GameObject livesText;
+    public GameObject highscoreText;
 
     // This enum stores different possible states of the game, we can then set these and do different
     // things depending on what state we are currently in...
@@ -50,6 +54,7 @@ public class GameManager : MonoBehaviour {
     private int rockSpawnRadius = 4;
     private int startingScore;
     private int startingLives;
+    private int highscore = 0;
 
     private bool isPaused;
 
@@ -219,8 +224,8 @@ public class GameManager : MonoBehaviour {
                         // Spawn more! Same as the initial amount. Creates neverending gameplay.
                         for (int i = 0; i < numStartingRocks; i++)
                         {
-                            float rockPosX = rockSpawnRadius * Mathf.Cos(Random.Range(0, 360));
-                            float rockPosy = rockSpawnRadius * Mathf.Sin(Random.Range(0, 360));
+                            float rockPosX = rockSpawnRadius * Mathf.Cos(UnityEngine.Random.Range(0, 360));
+                            float rockPosy = rockSpawnRadius * Mathf.Sin(UnityEngine.Random.Range(0, 360));
 
                             GameObject rockClone = Instantiate(startingRockPrefab, new Vector3(rockPosX, rockPosy, 0), Quaternion.identity) as GameObject;
 
@@ -242,7 +247,17 @@ public class GameManager : MonoBehaviour {
     // Available to call to update the current score of the game. The int passed is what is added.
     public void UpdateScore(int scoreToAdd)
     {
-        score += scoreToAdd;
+        // If the current score is greater than the highscore, set the score to the highscore.
+        if(score >= highscore)
+        {
+            score += scoreToAdd;
+            highscore = score;
+            highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
+        }
+        else
+        {
+            score += scoreToAdd;
+        }
 
         // Gets the GUIText component and updates it.
         scoreText.GetComponent<GUIText>().text = "Score: " + score;
@@ -264,6 +279,40 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    public void UpdateHighscore()
+    {
+        Load();
+
+        highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
+    }
+
+    public void Save()
+    {
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/gameInfo.dat");
+
+        GameData data = new GameData();
+
+        data.highscore = score;
+
+        bf.Serialize(file, data);
+
+        file.Close();
+    }
+
+    public void Load()
+    {
+        if(File.Exists(Application.persistentDataPath + "/gameInfo.dat"))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + "/gameInfo.dat", FileMode.Open);
+
+            GameData data = (GameData)bf.Deserialize(file);
+
+            highscore = data.highscore;
+        }
+    }
+
     // Function to constantly spawn Saucers into the game.
     IEnumerator SaucerSpawn()
     {
@@ -274,7 +323,7 @@ public class GameManager : MonoBehaviour {
         }
 
         // We pick a random corner of the screen..
-        int cornerSelection = Random.Range(0, 4);
+        int cornerSelection = UnityEngine.Random.Range(0, 4);
 
         Vector3 saucerSpawnPos = new Vector3(0,0,0);
 
@@ -303,19 +352,19 @@ public class GameManager : MonoBehaviour {
         // Then depending on the corner, we rotate the Saucer to prevent it from shooting off into space!
         if (cornerSelection == 0)
         {
-            saucerClone.transform.Rotate(Vector3.back * Random.Range(0, 90));
+            saucerClone.transform.Rotate(Vector3.back * UnityEngine.Random.Range(0, 90));
         }
         else if (cornerSelection == 1)
         {
-            saucerClone.transform.Rotate(Vector3.back * Random.Range(90, 180));
+            saucerClone.transform.Rotate(Vector3.back * UnityEngine.Random.Range(90, 180));
         }
         else if (cornerSelection == 2)
         {
-            saucerClone.transform.Rotate(Vector3.back * Random.Range(180, 270));
+            saucerClone.transform.Rotate(Vector3.back * UnityEngine.Random.Range(180, 270));
         }
         else if (cornerSelection == 3)
         {
-            saucerClone.transform.Rotate(Vector3.back * Random.Range(270, 360));
+            saucerClone.transform.Rotate(Vector3.back * UnityEngine.Random.Range(270, 360));
         }
 
         // Restart the Coroutine that is already running so Saucers are always respawning.
@@ -336,6 +385,7 @@ public class GameManager : MonoBehaviour {
         // Update the score and lives in the beginning of the game, or on restart.
         UpdateScore(0);
         UpdateLives(0);
+        UpdateHighscore();
 
         // Spawn the player!
         player = Instantiate(spaceshipPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
@@ -351,8 +401,8 @@ public class GameManager : MonoBehaviour {
         {
             // Cosine and sine always output a value from [-1, 1] inclusive.
             // We use that value to generate a random position that is always around the rockSpawnRadius.
-            float rockPosX = rockSpawnRadius * Mathf.Cos(Random.Range(0, 360));
-            float rockPosy = rockSpawnRadius * Mathf.Sin(Random.Range(0, 360));
+            float rockPosX = rockSpawnRadius * Mathf.Cos(UnityEngine.Random.Range(0, 360));
+            float rockPosy = rockSpawnRadius * Mathf.Sin(UnityEngine.Random.Range(0, 360));
 
             // Spawn the Rock prefab!
             GameObject rockClone = Instantiate(startingRockPrefab, new Vector3(rockPosX, rockPosy, 0), Quaternion.identity) as GameObject;
@@ -395,6 +445,13 @@ public class GameManager : MonoBehaviour {
         // Stop Coroutines that are currently running, SaucerSpawn() and PowerupSpawn() included.
         StopAllCoroutines();
 
+        if(score > highscore)
+        {
+            highscore = score;
+
+            Save();
+        }
+
         // Reset the score values to the original values. They are updated later when GameStart() is called.
         score = startingScore;
         playerLives = startingLives;
@@ -410,10 +467,10 @@ public class GameManager : MonoBehaviour {
             yield return null;
         }
 
-        float powerupPosX = Random.Range((screenSW.x + 2), (screenNE.x - 2));
-        float powerupPosY = Random.Range((screenSW.y + 2), (screenNE.y - 2));
+        float powerupPosX = UnityEngine.Random.Range((screenSW.x + 2), (screenNE.x - 2));
+        float powerupPosY = UnityEngine.Random.Range((screenSW.y + 2), (screenNE.y - 2));
 
-        int randomPowerUp = Random.Range(0, 5);
+        int randomPowerUp = UnityEngine.Random.Range(0, 5);
 
         // These next lines instantiate a prefab based on the random choice made by randomPowerUp.
         // Shield Powerup
@@ -484,4 +541,10 @@ public class GameManager : MonoBehaviour {
         // Hide the cursor while normal game is running.
         Cursor.visible = false;
     }
+}
+
+[Serializable]
+public class GameData
+{
+    public int highscore;
 }
