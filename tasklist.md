@@ -1,12 +1,13 @@
 # Astroshooter To-do / Tasklist
 
 ## Coding | Programming
-- Spaceship upgrading, standard spaceships to choose from. (Differences based on size, mass, speed, etc.)
+- Spaceship upgrading. Separate scenes to switch from, Main Menu, Ship Editor?, Game, etc.
+- Standard spaceships to choose from. (Differences based on size, mass, speed, etc.)
 - Input: based on mouse, rotating the player to that input, allowing for shooting with mouse?
 - Bonus stages where you have to navigate through a moving asteroid field?
 - Multiplayer support?:)
 
 ## Visuals | Graphics
 - Main Menu
-- Consolidating UI elements into the canvas, or a similar system.
+- Visual Ship Editor?
 - Change `livesText` to something more visual like mini-spaceships. (Nod to Pacman.)
