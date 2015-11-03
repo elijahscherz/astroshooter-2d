@@ -29,7 +29,8 @@ public class GameManager : MonoBehaviour {
 
     // This enum stores different possible states of the game, we can then set these and do different
     // things depending on what state we are currently in...
-    public enum gameState { main, gamePaused, game, gameOver };
+    //public enum gameState { main, gamePaused, game, gameOver };
+    public enum gameState { gamePaused, game, gameOver };
     // .. using this variable.
     public gameState state;
 
@@ -63,7 +64,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
         // These four lines set the UI elements to hidden when the game first starts.
-        mainUI.SetActive(false);
+        //mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
@@ -72,9 +73,9 @@ public class GameManager : MonoBehaviour {
         // to the state during the start of this script.
         switch(state)
         {
-            case gameState.main:
-                mainUI.SetActive(true);
-                break;
+            //case gameState.main:
+            //    mainUI.SetActive(true);
+            //    break;
 
             case gameState.game:
                 gameUI.SetActive(true);
@@ -93,6 +94,8 @@ public class GameManager : MonoBehaviour {
         startingLives = playerLives;
         UpdateScore(0);
         UpdateLives(0);
+
+        StartCoroutine(GameStart());
 	}
 	
 	// Update is called once per frame.
@@ -101,14 +104,14 @@ public class GameManager : MonoBehaviour {
         switch(state)
         {
             // While in the gameState "main" execute this code..
-            case gameState.main:
+            //case gameState.main:
 
-                if(Input.GetKeyDown(KeyCode.Return))
-                {
-                    StartCoroutine(GameStart());
-                }
+            //    if(Input.GetKeyDown(KeyCode.Return))
+            //    {
+            //        StartCoroutine(GameStart());
+            //    }
 
-                break;
+            //    break;
 
             // While in the gameState "gamePaused" execute this code..
             case gameState.gamePaused:
@@ -173,15 +176,14 @@ public class GameManager : MonoBehaviour {
                     float translation = Input.GetAxis("Vertical");
                     float rotation = Input.GetAxis("Horizontal");
 
-                    // Switch to 0.1?
-                    if (rotation > 0.1) // When pushing the right arrow.
+                    if (rotation > 0) // When pushing the right arrow.
                     {
-                        spaceship.TurnRight(rotation);
+                        spaceship.Turn(rotation);
                     }
 
-                    if (rotation < 0.1) // When pushing the left arrow.
+                    if (rotation < 0) // When pushing the left arrow.
                     {
-                        spaceship.TurnLeft(rotation);
+                        spaceship.Turn(rotation);
                     }
 
                     if (translation >= 0.5f) // When up arrow is pushed.
@@ -253,7 +255,6 @@ public class GameManager : MonoBehaviour {
         {
             score += scoreToAdd;
             highscore = score;
-            //highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
             highscoreText.GetComponent<Text>().text = "Highscore: " + highscore;
         }
         else
@@ -261,8 +262,7 @@ public class GameManager : MonoBehaviour {
             score += scoreToAdd;
         }
 
-        // Gets the GUIText component and updates it.
-        //scoreText.GetComponent<GUIText>().text = "Score: " + score;
+        // Gets the Text component and updates it.
         scoreText.GetComponent<Text>().text = "Score: " + score;
     }
 
@@ -272,8 +272,7 @@ public class GameManager : MonoBehaviour {
     {
         playerLives -= livesLost;
 
-        // Gets the GUIText component and updates it.
-        //livesText.GetComponent<GUIText>().text = "Lives: " + playerLives;
+        // Gets the Text component and updates it.
         livesText.GetComponent<Text>().text = "Lives: " + playerLives;
 
         // This keeps track of player lives, if less than one.. Game over.
@@ -451,7 +450,8 @@ public class GameManager : MonoBehaviour {
         // Stop Coroutines that are currently running, SaucerSpawn() and PowerupSpawn() included.
         StopAllCoroutines();
 
-        if(score > highscore)
+        // TODO: Maybe don't need this?
+        if (score >= highscore)
         {
             highscore = score;
 

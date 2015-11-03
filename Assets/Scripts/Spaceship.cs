@@ -39,6 +39,7 @@ public class Spaceship : MonoBehaviour {
 
     private float wrapPadding = 1f;
     private float accelRate = 0f;
+    private float rotationRate = 0f;
     private float nextFire;
     private float nextWarp;
 
@@ -68,6 +69,17 @@ public class Spaceship : MonoBehaviour {
 
         // Move the player!
         gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * (speed * accelRate));
+
+        if (rotationRate > 0)
+        {
+            transform.Rotate(Vector3.back * (rotationRate * turnSpeed));
+            rotationRate *= 0.0f;
+        }
+        else if (rotationRate < 0)
+        {
+            transform.Rotate(Vector3.forward * (rotationRate * -turnSpeed));
+            rotationRate *= 0.0f;
+        }
 
         // Wrapping on sides.
         // When player goes off left..
@@ -147,22 +159,13 @@ public class Spaceship : MonoBehaviour {
         gameManager = gameManagerObject;
     }
 
-    // Rotates the player locally around the z axis.
-    public void TurnRight(float rotation = 1)
-    {
-        if(hit)
-            return;
-
-        transform.Rotate(Vector3.back * (rotation * turnSpeed));
-    }
-
     // Also rotates around z axis locally. Forward is counterclockwise.
-    public void TurnLeft(float rotation = 1)
+    public void Turn(float rotation)
     {
         if (hit)
             return;
 
-        transform.Rotate(Vector3.forward * (rotation * -turnSpeed));
+        rotationRate = rotation;
     }
 
     // Sets acceleration rate to 0 or 1 based on up-arrow input. Then sets the animation state accordingly.
