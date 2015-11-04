@@ -9,5 +9,6 @@
 
 ## Visuals | Graphics
 - Main Menu
+- Screen UI elements need to be resized depending on window size.
 - Visual Ship Editor?
 - Change `livesText` to something more visual like mini-spaceships. (Nod to Pacman.)
