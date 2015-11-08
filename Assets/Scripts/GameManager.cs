@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour {
 
     // This enum stores different possible states of the game, we can then set these and do different
     // things depending on what state we are currently in...
-    //public enum gameState { main, gamePaused, game, gameOver };
     public enum gameState { gamePaused, game, gameOver };
     // .. using this variable.
     public gameState state;
@@ -64,7 +63,6 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
         // These four lines set the UI elements to hidden when the game first starts.
-        //mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
@@ -73,10 +71,6 @@ public class GameManager : MonoBehaviour {
         // to the state during the start of this script.
         switch(state)
         {
-            //case gameState.main:
-            //    mainUI.SetActive(true);
-            //    break;
-
             case gameState.game:
                 gameUI.SetActive(true);
                 break;
@@ -103,16 +97,6 @@ public class GameManager : MonoBehaviour {
 
         switch(state)
         {
-            // While in the gameState "main" execute this code..
-            //case gameState.main:
-
-            //    if(Input.GetKeyDown(KeyCode.Return))
-            //    {
-            //        StartCoroutine(GameStart());
-            //    }
-
-            //    break;
-
             // While in the gameState "gamePaused" execute this code..
             case gameState.gamePaused:
 
@@ -122,10 +106,6 @@ public class GameManager : MonoBehaviour {
                 {
                     // Resumes the game, by setting it back to the "game" gameState.
                     state = gameState.game;
-                }
-                else if(Input.GetKeyDown(KeyCode.Q))
-                {
-                    Application.Quit();
                 }
 
                 break;
@@ -533,7 +513,7 @@ public class GameManager : MonoBehaviour {
         Cursor.visible = true;
     }
 
-    void GameUnpaused()
+    public void GameUnpaused()
     {
         // Set the correct UIs to visible or hidden.
         mainUI.SetActive(false);
@@ -546,6 +526,16 @@ public class GameManager : MonoBehaviour {
 
         // Hide the cursor while normal game is running.
         Cursor.visible = false;
+    }
+
+    public void ResumeButtonClick()
+    {
+        state = gameState.game;
+    }
+
+    public void MainMenuButtonClick()
+    {
+        Application.LoadLevel("MainMenu");
     }
 }
 
