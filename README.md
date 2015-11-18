@@ -15,12 +15,8 @@ If you want to try the most recent build of the game, go to `Demos`, choose your
 - Movement system based on mouse input. (Based on upgrades.)
 
 ## Coming Soon
-- Highscore tracking and saving. (CHECK!)
 - Main Menu (semi-CHECK!)
-- Consistent UI elements, regarding position on screen. (CHECK!)
+- Default ships to choose from.
 
 ## Recently Implemented
-- Cool Powerups
-- Highscore Saving
-- Shield Animations
-- Somewhat of a Main Menu
+- Consistent UI
