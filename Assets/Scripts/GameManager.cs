@@ -8,7 +8,9 @@ using System.IO;
 public class GameManager : MonoBehaviour {
 
     // Prefab variable GameObjects set in the Unity interface later.
-    public GameObject spaceshipPrefab;
+    public GameObject spaceshipDefaultPrefab;
+    public GameObject spaceshipSpeedyPrefab;
+    public GameObject spaceshipBlazePrefab;
     public GameObject startingRockPrefab;
     public GameObject saucerPrefab;
     public GameObject shieldPowerupPrefab;
@@ -19,7 +21,6 @@ public class GameManager : MonoBehaviour {
 
     // UI element GameObjects also to be set in Unity interface, then used here of course.
     public GameObject gameUI;
-    public GameObject mainUI;
     public GameObject pauseMenuUI;
     public GameObject gameOverUI;
     public GameObject finalScoreText;
@@ -33,6 +34,8 @@ public class GameManager : MonoBehaviour {
     // .. using this variable.
     public gameState state;
 
+    public enum shipType { defaultShip, speedyShip, blazeShip}
+
     // Starting values for game elements.
     public int playerLives = 3;
     public int score = 0;
@@ -41,7 +44,10 @@ public class GameManager : MonoBehaviour {
     public float saucerSpawnRate = 5f;
     public float powerupSpawnRate = 18f;
 
+    public bool isPaused;
+
     private GameObject player;
+    private GameObject spaceshipPrefab;
 
     private Vector3 screenSW;
     private Vector3 screenNE;
@@ -56,8 +62,7 @@ public class GameManager : MonoBehaviour {
     private int startingScore;
     private int startingLives;
     private int highscore = 0;
-
-    private bool isPaused;
+    private int shipTypeIndex = 1;
 
 	// Use this for initialization.
 	void Start () {
@@ -221,6 +226,72 @@ public class GameManager : MonoBehaviour {
         }
 	}
 
+    void ShipPrefabSet(int shipTypeIndex)
+    {
+        switch (shipTypeIndex)
+        {
+            case 1:
+                spaceshipPrefab = spaceshipDefaultPrefab;
+                break;
+
+            case 2:
+                spaceshipPrefab = spaceshipSpeedyPrefab;
+                break;
+
+            case 3:
+                spaceshipPrefab = spaceshipBlazePrefab;
+                break;
+        }
+    }
+
+    void ShipTypeSet(int shipTypeIndex)
+    {
+        switch (shipTypeIndex)
+        {
+            case 1:
+                spaceship.Speed = ShipData.SHIP_DEFAULT_SPEED;
+                spaceship.TurnSpeed = ShipData.SHIP_DEFAULT_TURNSPEED;
+                spaceship.FireRate = ShipData.SHIP_DEFAULT_FIRERATE;
+                spaceship.RespawnRate = ShipData.SHIP_DEFAULT_RESPAWNRATE;
+                spaceship.WarpCoolDown = ShipData.SHIP_DEFAULT_WARPCOOLDOWN;
+                spaceship.BulletPowerupTime = ShipData.SHIP_DEFAULT_BULLETPOWERUPTIME;
+                spaceship.ShipControlPowerupTime = ShipData.SHIP_DEFAULT_SHIPCONTROLPOWERUPTIME;
+                spaceship.DoubleShotPowerupTime = ShipData.SHIP_DEFAULT_DOUBLESHOTPOWERUPTIME;
+
+                player.GetComponent<Rigidbody2D>().mass = ShipData.SHIP_DEFAULT_MASS;
+                player.GetComponent<Rigidbody2D>().drag = ShipData.SHIP_DEFAULT_LINEARDRAG;
+                break;
+
+            case 2:
+                spaceship.Speed = ShipData.SHIP_SPEEDY_SPEED;
+                spaceship.TurnSpeed = ShipData.SHIP_SPEEDY_TURNSPEED;
+                spaceship.FireRate = ShipData.SHIP_SPEEDY_FIRERATE;
+                spaceship.RespawnRate = ShipData.SHIP_SPEEDY_RESPAWNRATE;
+                spaceship.WarpCoolDown = ShipData.SHIP_SPEEDY_WARPCOOLDOWN;
+                spaceship.BulletPowerupTime = ShipData.SHIP_SPEEDY_BULLETPOWERUPTIME;
+                spaceship.ShipControlPowerupTime = ShipData.SHIP_SPEEDY_SHIPCONTROLPOWERUPTIME;
+                spaceship.DoubleShotPowerupTime = ShipData.SHIP_SPEEDY_DOUBLESHOTPOWERUPTIME;
+
+                player.GetComponent<Rigidbody2D>().mass = ShipData.SHIP_SPEEDY_MASS;
+                player.GetComponent<Rigidbody2D>().drag = ShipData.SHIP_SPEEDY_LINEARDRAG;
+                break;
+
+            case 3:
+                spaceship.Speed = ShipData.SHIP_BLAZE_SPEED;
+                spaceship.TurnSpeed = ShipData.SHIP_BLAZE_TURNSPEED;
+                spaceship.FireRate = ShipData.SHIP_BLAZE_FIRERATE;
+                spaceship.RespawnRate = ShipData.SHIP_BLAZE_RESPAWNRATE;
+                spaceship.WarpCoolDown = ShipData.SHIP_BLAZE_WARPCOOLDOWN;
+                spaceship.BulletPowerupTime = ShipData.SHIP_BLAZE_BULLETPOWERUPTIME;
+                spaceship.ShipControlPowerupTime = ShipData.SHIP_BLAZE_SHIPCONTROLPOWERUPTIME;
+                spaceship.DoubleShotPowerupTime = ShipData.SHIP_BLAZE_DOUBLESHOTPOWERUPTIME;
+
+                player.GetComponent<Rigidbody2D>().mass = ShipData.SHIP_BLAZE_MASS;
+                player.GetComponent<Rigidbody2D>().drag = ShipData.SHIP_BLAZE_LINEARDRAG;
+                break;
+        }
+    }
+
     // While the ship / player is hidden after dying, we move them back to center. Sneaky.
     public void ResetShip()
     {
@@ -266,7 +337,6 @@ public class GameManager : MonoBehaviour {
     {
         Load();
 
-        //highscoreText.GetComponent<GUIText>().text = "Highscore: " + highscore;
         highscoreText.GetComponent<Text>().text = "Highscore: " + highscore;
     }
 
@@ -294,6 +364,28 @@ public class GameManager : MonoBehaviour {
             GameData data = (GameData)bf.Deserialize(file);
 
             highscore = data.highscore;
+        }
+        else
+        {
+            Debug.Log("Highscore load failed.");
+        }
+    }
+
+    public void LoadShipType()
+    {
+        if (File.Exists(Application.persistentDataPath + "/shipInfo.dat"))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + "/shipInfo.dat", FileMode.Open);
+
+            GameData data = (GameData)bf.Deserialize(file);
+
+            shipTypeIndex = data.shipTypeIndex;
+        }
+        else
+        {
+            Debug.Log("Ship type load failed. Attempting to set to default.");
+            shipTypeIndex = 1;
         }
     }
 
@@ -358,7 +450,6 @@ public class GameManager : MonoBehaviour {
     IEnumerator GameStart()
     {
         // Set the proper UI's to display.
-        mainUI.SetActive(false);
         gameUI.SetActive(true);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
@@ -371,11 +462,17 @@ public class GameManager : MonoBehaviour {
         UpdateLives(0);
         UpdateHighscore();
 
+        LoadShipType();
+
+        ShipPrefabSet(shipTypeIndex);
+
         // Spawn the player!
         player = Instantiate(spaceshipPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
 
         // We use a Spaceship object for easier calling to the player's spaceship.
         spaceship = player.GetComponent<Spaceship>();
+
+        ShipTypeSet(shipTypeIndex);
 
         // Set the GameManager to this object so we can keep a leash on it.
         spaceship.SetGameManager(this.gameObject);
@@ -412,7 +509,6 @@ public class GameManager : MonoBehaviour {
     IEnumerator GameEnd()
     {
         // Enable / Disable needed UI elements.
-        mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(true);
         pauseMenuUI.SetActive(false);
@@ -501,7 +597,6 @@ public class GameManager : MonoBehaviour {
     void GamePaused()
     {
         // Set the correct UIs to enabled or disabled.
-        mainUI.SetActive(false);
         gameUI.SetActive(false);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(true);
@@ -516,7 +611,6 @@ public class GameManager : MonoBehaviour {
     public void GameUnpaused()
     {
         // Set the correct UIs to visible or hidden.
-        mainUI.SetActive(false);
         gameUI.SetActive(true);
         gameOverUI.SetActive(false);
         pauseMenuUI.SetActive(false);
@@ -543,4 +637,6 @@ public class GameManager : MonoBehaviour {
 public class GameData
 {
     public int highscore;
+
+    public int shipTypeIndex;
 }

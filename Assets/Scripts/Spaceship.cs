@@ -13,16 +13,23 @@ public class Spaceship : MonoBehaviour {
     public AudioClip powerupGrabbed;
     public AudioClip powerupWoreOff;
 
-    public float speed = 1f;
-    public float turnSpeed = 1f;
-    public float fireRate = 0.5f;
-    public float respawnRate = 1f;
-    public float warpCoolDown = 0.5f;
+    // Ship properties.
+    public float Speed { get; set; }
+    public float TurnSpeed { get; set; }
+    public float FireRate { get; set; }
+    public float RespawnRate { get; set; }
+    public float WarpCoolDown { get; set; }
 
-    public float shieldTime = 3f;
-    public float laserBulletTime = 5f;
-    public float shipControlTime = 15f;
-    public float doubleShotTime = 8f;
+    // Physics properties.
+    public float LinearDrag { get; set; }
+    public float Mass { get; set; }
+
+    public bool CanReverse { get; set; }
+
+    // Powerup properties.
+    public float BulletPowerupTime { get; set; }
+    public float ShipControlPowerupTime { get; set; }
+    public float DoubleShotPowerupTime { get; set; }
 
     public bool isShipControlActive = false;
     public bool isDoubleShotActive = false;
@@ -63,21 +70,19 @@ public class Spaceship : MonoBehaviour {
         StartCoroutine(ShieldActive());
 	}
 	
-	// Update is called once per frame
-    // Switch to FixedUpdate?
 	void FixedUpdate () {
 
         // Move the player!
-        gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * (speed * accelRate));
+        gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * (Speed * accelRate));
 
         if (rotationRate > 0)
         {
-            transform.Rotate(Vector3.back * (rotationRate * turnSpeed));
+            transform.Rotate(Vector3.back * (rotationRate * TurnSpeed));
             rotationRate *= 0.0f;
         }
         else if (rotationRate < 0)
         {
-            transform.Rotate(Vector3.forward * (rotationRate * -turnSpeed));
+            transform.Rotate(Vector3.forward * (rotationRate * -TurnSpeed));
             rotationRate *= 0.0f;
         }
 
@@ -176,7 +181,7 @@ public class Spaceship : MonoBehaviour {
 
         if(isShipControlActive)
         {
-            accelRate = (accel * 1.5f);
+            accelRate = (accel * 1.8f);
         }
         else
         {
@@ -196,7 +201,7 @@ public class Spaceship : MonoBehaviour {
     // Smoothly decelerates the player when theres no input.
     public void Idle()
     {
-        if (hit)
+        if (hit || gameManager.GetComponent<GameManager>().isPaused)
             return;
 
         accelRate *= 0.0f;
@@ -229,7 +234,7 @@ public class Spaceship : MonoBehaviour {
         // If more time has passed than the required wait time to fire, a bullet is fired.
         if(Time.time > nextFire)
         {
-            nextFire = Time.time + fireRate;
+            nextFire = Time.time + FireRate;
 
             if(isDoubleShotActive)
             {
@@ -254,7 +259,7 @@ public class Spaceship : MonoBehaviour {
 
         if(Time.time > nextWarp)
         {
-            nextWarp = Time.time + warpCoolDown;
+            nextWarp = Time.time + WarpCoolDown;
 
             float newXPos = Random.Range(screenSW.x, screenNE.x);
             float newYPos = Random.Range(screenSW.y, screenNE.y);
@@ -269,7 +274,7 @@ public class Spaceship : MonoBehaviour {
         audioSource.PlayOneShot(powerupGrabbed);
         bulletPrefab = spaceshipPowerupBulletPrefab;
 
-        yield return new WaitForSeconds(laserBulletTime);
+        yield return new WaitForSeconds(BulletPowerupTime);
 
         audioSource.PlayOneShot(powerupWoreOff);
         bulletPrefab = spaceshipBulletPrefab;
@@ -280,7 +285,7 @@ public class Spaceship : MonoBehaviour {
         audioSource.PlayOneShot(powerupGrabbed);
         isShipControlActive = true;
 
-        yield return new WaitForSeconds(shipControlTime);
+        yield return new WaitForSeconds(ShipControlPowerupTime);
 
         audioSource.PlayOneShot(powerupWoreOff);
         isShipControlActive = false;
@@ -291,7 +296,7 @@ public class Spaceship : MonoBehaviour {
         audioSource.PlayOneShot(powerupGrabbed);
         isDoubleShotActive = true;
 
-        yield return new WaitForSeconds(doubleShotTime);
+        yield return new WaitForSeconds(DoubleShotPowerupTime);
 
         audioSource.PlayOneShot(powerupWoreOff);
         isDoubleShotActive = false;
@@ -315,7 +320,7 @@ public class Spaceship : MonoBehaviour {
         gameObject.GetComponent<Renderer>().enabled = false;
         gameObject.GetComponent<Collider2D>().enabled = false;
 
-        yield return new WaitForSeconds(respawnRate);
+        yield return new WaitForSeconds(RespawnRate);
 
         gameObject.GetComponent<Renderer>().enabled = true;
         gameObject.GetComponent<Collider2D>().enabled = true;

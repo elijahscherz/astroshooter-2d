@@ -1,0 +1,144 @@
+fileFormatVersion: 2
+guid: 5357cbb7b11aa034fb4f9a56c81146bb
+timeCreated: 1449286557
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: redShipThrust
+    21300002: redShipExplode1
+    21300004: redShipShield
+    21300006: redShipShieldThrust
+    21300008: redShipExplode2
+    21300010: redSpaceship
+    21300012: redLaserOrange
+    21300014: redLaserRed
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 8
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -3
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: redShipThrust
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 401
+        width: 99
+        height: 110
+      alignment: 9
+      pivot: {x: .5, y: .758000016}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: redShipExplode1
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 169
+        width: 145
+        height: 85
+      alignment: 9
+      pivot: {x: .5, y: .670000017}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: redShipShield
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 126
+        width: 131
+        height: 126
+      alignment: 9
+      pivot: {x: .492000014, y: .574999988}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: redShipShieldThrust
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 115
+        width: 131
+        height: 136
+      alignment: 9
+      pivot: {x: .476999998, y: .617999971}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: redShipExplode2
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 82
+        width: 187
+        height: 81
+      alignment: 9
+      pivot: {x: .493999988, y: .709999979}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: redSpaceship
+      rect:
+        serializedVersion: 2
+        x: 340
+        y: 29
+        width: 99
+        height: 85
+      alignment: 9
+      pivot: {x: .5, y: .670000017}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: redLaserOrange
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 26
+        width: 13
+        height: 54
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: redLaserRed
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 26
+        width: 13
+        height: 54
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
