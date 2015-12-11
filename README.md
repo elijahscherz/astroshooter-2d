@@ -16,7 +16,7 @@ If you want to try the most recent build of the game, go to `Demos`, choose your
 
 ## Coming Soon
 - Main Menu (semi-CHECK!)
-- Default ships to choose from.
+- Default ships to choose from. (Check!)
 
 ## Recently Implemented
-- Consistent UI
+- Three standard ship types available for choosing: default, speedy, and blaze.
