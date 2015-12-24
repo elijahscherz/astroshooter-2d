@@ -21,8 +21,8 @@ public class Spaceship : MonoBehaviour {
     public float WarpCoolDown { get; set; }
 
     // Physics properties.
-    public float LinearDrag { get; set; }
-    public float Mass { get; set; }
+    //public float LinearDrag { get; set; }
+    //public float Mass { get; set; }
 
     public bool CanReverse { get; set; }
 
@@ -30,6 +30,8 @@ public class Spaceship : MonoBehaviour {
     public float BulletPowerupTime { get; set; }
     public float ShipControlPowerupTime { get; set; }
     public float DoubleShotPowerupTime { get; set; }
+
+    public int ShipTypeIndex { get; set; }
 
     public bool isShipControlActive = false;
     public bool isDoubleShotActive = false;
@@ -58,8 +60,8 @@ public class Spaceship : MonoBehaviour {
 	void Start () {
 
         // Switch "this" to "gameObject"?
-        animator = this.GetComponent<Animator>();
-        audioSource = this.GetComponent<AudioSource>();
+        animator = gameObject.GetComponent<Animator>();
+        audioSource = gameObject.GetComponent<AudioSource>();
 
         bulletPrefab = spaceshipBulletPrefab;
 
@@ -283,12 +285,18 @@ public class Spaceship : MonoBehaviour {
     IEnumerator ShipControl()
     {
         audioSource.PlayOneShot(powerupGrabbed);
+
+        if (ShipTypeIndex == 2)
+            yield break;
+
         isShipControlActive = true;
+        CanReverse = true;
 
         yield return new WaitForSeconds(ShipControlPowerupTime);
 
         audioSource.PlayOneShot(powerupWoreOff);
         isShipControlActive = false;
+        CanReverse = false;
     }
 
     IEnumerator DoubleShot()

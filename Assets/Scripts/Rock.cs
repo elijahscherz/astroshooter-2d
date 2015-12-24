@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Rock : MonoBehaviour {
+public class Rock : MonoBehaviour
+{
 
     public GameObject childRockPrefab;
 
@@ -18,10 +19,9 @@ public class Rock : MonoBehaviour {
 
     private float wrapPadding = 1f;
 
-    //private bool normMovement = true;
-
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
 
         audioSource = this.GetComponent<AudioSource>();
 
@@ -29,10 +29,11 @@ public class Rock : MonoBehaviour {
         screenNE = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.localPosition.z));
 
         transform.Rotate(Vector3.forward * Random.Range(0, 360));
-	}
-	
-	// Update is called once per frame
-	void FixedUpdate () {
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
         gameObject.GetComponent<Rigidbody2D>().AddForce(transform.up * speed);
 
         // Wrapping on sides.
@@ -58,11 +59,11 @@ public class Rock : MonoBehaviour {
         {
             transform.localPosition = new Vector3(transform.localPosition.x, screenSW.y, transform.localPosition.z);
         }
-	}
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player")
         {
             StartCoroutine(DestroyRock());
         }
@@ -90,9 +91,9 @@ public class Rock : MonoBehaviour {
     {
         audioSource.PlayOneShot(hitSfx);
 
-        if(childRockPrefab != null)
+        if (childRockPrefab != null)
         {
-            for(int i = 0; i < numChildRocks; i++)
+            for (int i = 0; i < numChildRocks; i++)
             {
                 GameObject rockClone = Instantiate(childRockPrefab, transform.localPosition, Quaternion.identity) as GameObject;
 

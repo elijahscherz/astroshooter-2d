@@ -5,7 +5,8 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     // Prefab variable GameObjects set in the Unity interface later.
     public GameObject spaceshipDefaultPrefab;
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour {
     public GameObject scoreText;
     public GameObject livesText;
     public GameObject highscoreText;
+    public GameObject galacticCreditsText;
 
     // This enum stores different possible states of the game, we can then set these and do different
     // things depending on what state we are currently in...
@@ -34,12 +36,13 @@ public class GameManager : MonoBehaviour {
     // .. using this variable.
     public gameState state;
 
-    public enum shipType { defaultShip, speedyShip, blazeShip}
+    public enum shipType { defaultShip, speedyShip, blazeShip }
 
     // Starting values for game elements.
     public int playerLives = 3;
     public int score = 0;
     public int numStartingRocks = 2;
+    public int shipTypeIndex = 1;
 
     public float saucerSpawnRate = 5f;
     public float powerupSpawnRate = 18f;
@@ -62,10 +65,12 @@ public class GameManager : MonoBehaviour {
     private int startingScore;
     private int startingLives;
     private int highscore = 0;
-    private int shipTypeIndex = 1;
+    private int currentGalacticCredits;
+    private decimal credits = 0;
 
-	// Use this for initialization.
-	void Start () {
+    // Use this for initialization.
+    void Start()
+    {
 
         // These four lines set the UI elements to hidden when the game first starts.
         gameUI.SetActive(false);
@@ -74,7 +79,7 @@ public class GameManager : MonoBehaviour {
 
         // These cases allow for leniency when activating UI that applies specifically
         // to the state during the start of this script.
-        switch(state)
+        switch (state)
         {
             case gameState.game:
                 gameUI.SetActive(true);
@@ -95,19 +100,20 @@ public class GameManager : MonoBehaviour {
         UpdateLives(0);
 
         StartCoroutine(GameStart());
-	}
-	
-	// Update is called once per frame.
-	void Update () {
+    }
 
-        switch(state)
+    // Update is called once per frame.
+    void Update()
+    {
+
+        switch (state)
         {
             // While in the gameState "gamePaused" execute this code..
             case gameState.gamePaused:
 
                 GamePaused();
 
-                if(Input.GetKeyDown(KeyCode.Escape))
+                if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     // Resumes the game, by setting it back to the "game" gameState.
                     state = gameState.game;
@@ -118,34 +124,12 @@ public class GameManager : MonoBehaviour {
             // When the game ends (basically), run these lines of code..
             case gameState.gameOver:
 
-                // When the player strikes Enter/Return to restart the game. (Previously at highscore screen.)
-                if (Input.GetKeyDown(KeyCode.Return))
+                if(Cursor.visible == false)
                 {
-                    // Creates an array of the leftover Rocks in the scene, and destroys them. Finds using Unity Tags.
-                    GameObject[] rocksToDestroy = GameObject.FindGameObjectsWithTag("Rock");
-
-                    /* Starting int "i" equals zero (represents the current Rock in the array) and until
-                     that int is at a value less than the length of the rocksToDestroy array, destroy the
-                     current Rock in the for loop. */
-                    
-                    for(int i = 0; i < rocksToDestroy.Length; i++)
-                    {
-                        Destroy(rocksToDestroy[i]);
-                    }
-
-                    // Creates an array just like the rocksToDestroy array, but for powerups.
-                    GameObject[] powerupsToDestroy = GameObject.FindGameObjectsWithTag("Powerup");
-
-                    // The for loop also functions in the same fashion.
-                    for (int i = 0; i < powerupsToDestroy.Length; i++)
-                    {
-                        Destroy(powerupsToDestroy[i]);
-                    }
-                        
-                        // When all that is finally done getting cleaned up, restart the game.
-                        StartCoroutine(GameStart());
+                    Cursor.visible = true;
                 }
-                else if (Input.GetKeyDown(KeyCode.Escape))
+
+                if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     Application.Quit();
                 }
@@ -177,7 +161,7 @@ public class GameManager : MonoBehaviour {
                         // Also sets the State in Mechanim.
                         spaceship.Move(translation);
                     }
-                    else if ((translation <= -0.5f) && spaceship.isShipControlActive) // When the down arrow is pushed and the
+                    else if ((translation <= -0.5f) && spaceship.CanReverse == true) // When the down arrow is pushed and the
                     {                                                                 // ship control powerup is active.
                         spaceship.Move(translation);
                     }
@@ -198,9 +182,9 @@ public class GameManager : MonoBehaviour {
                     }
 
                     // We also support pausing of the game, give us an award. (Please.. heh.)
-                    if(Input.GetKeyDown(KeyCode.Escape))
+                    if (Input.GetKeyDown(KeyCode.Escape))
                     {
-                            state = gameState.gamePaused;
+                        state = gameState.gamePaused;
                     }
 
                     // This array and following "if" statement and "for" loop keep track of the Rocks in the scene.
@@ -217,15 +201,17 @@ public class GameManager : MonoBehaviour {
 
                             GameObject rockClone = Instantiate(startingRockPrefab, new Vector3(rockPosX, rockPosy, 0), Quaternion.identity) as GameObject;
 
-                            rockClone.GetComponent<Rock>().SetGameManager(this.gameObject);
+                            rockClone.GetComponent<Rock>().SetGameManager(gameObject);
                         }
                     }
 
                     break;
                 }
         }
-	}
+    }
 
+    // Quick switch to set the prefab of the pre-made ships available. 1 = default, 2 = blaze, 3 = speedy.
+    // ShipTypeIndex is set through a saved value to GameData.cs
     void ShipPrefabSet(int shipTypeIndex)
     {
         switch (shipTypeIndex)
@@ -244,10 +230,12 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    // Based on the imported ship type, the properties are set accordingly.
     void ShipTypeSet(int shipTypeIndex)
     {
         switch (shipTypeIndex)
         {
+            // Default
             case 1:
                 spaceship.Speed = ShipData.SHIP_DEFAULT_SPEED;
                 spaceship.TurnSpeed = ShipData.SHIP_DEFAULT_TURNSPEED;
@@ -260,8 +248,12 @@ public class GameManager : MonoBehaviour {
 
                 player.GetComponent<Rigidbody2D>().mass = ShipData.SHIP_DEFAULT_MASS;
                 player.GetComponent<Rigidbody2D>().drag = ShipData.SHIP_DEFAULT_LINEARDRAG;
-                break;
 
+                spaceship.CanReverse = ShipData.SHIP_DEFAULT_CANREVERSE;
+                spaceship.ShipTypeIndex = 1;
+                break;
+            
+            // Speedy
             case 2:
                 spaceship.Speed = ShipData.SHIP_SPEEDY_SPEED;
                 spaceship.TurnSpeed = ShipData.SHIP_SPEEDY_TURNSPEED;
@@ -274,8 +266,12 @@ public class GameManager : MonoBehaviour {
 
                 player.GetComponent<Rigidbody2D>().mass = ShipData.SHIP_SPEEDY_MASS;
                 player.GetComponent<Rigidbody2D>().drag = ShipData.SHIP_SPEEDY_LINEARDRAG;
+
+                spaceship.CanReverse = ShipData.SHIP_SPEEDY_CANREVERSE;
+                spaceship.ShipTypeIndex = 2;
                 break;
 
+            // Blaze
             case 3:
                 spaceship.Speed = ShipData.SHIP_BLAZE_SPEED;
                 spaceship.TurnSpeed = ShipData.SHIP_BLAZE_TURNSPEED;
@@ -288,6 +284,9 @@ public class GameManager : MonoBehaviour {
 
                 player.GetComponent<Rigidbody2D>().mass = ShipData.SHIP_BLAZE_MASS;
                 player.GetComponent<Rigidbody2D>().drag = ShipData.SHIP_BLAZE_LINEARDRAG;
+
+                spaceship.CanReverse = ShipData.SHIP_BLAZE_CANREVERSE;
+                spaceship.ShipTypeIndex = 3;
                 break;
         }
     }
@@ -295,6 +294,7 @@ public class GameManager : MonoBehaviour {
     // While the ship / player is hidden after dying, we move them back to center. Sneaky.
     public void ResetShip()
     {
+        player.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         player.transform.localPosition = new Vector3(0, 0, 0);
     }
 
@@ -302,7 +302,7 @@ public class GameManager : MonoBehaviour {
     public void UpdateScore(int scoreToAdd)
     {
         // If the current score is greater than the highscore, set the score to the highscore.
-        if(score >= highscore)
+        if (score >= highscore)
         {
             score += scoreToAdd;
             highscore = score;
@@ -327,7 +327,7 @@ public class GameManager : MonoBehaviour {
         livesText.GetComponent<Text>().text = "Lives: " + playerLives;
 
         // This keeps track of player lives, if less than one.. Game over.
-        if(playerLives < 1)
+        if (playerLives < 1)
         {
             StartCoroutine(GameEnd());
         }
@@ -346,8 +346,13 @@ public class GameManager : MonoBehaviour {
         FileStream file = File.Create(Application.persistentDataPath + "/gameInfo.dat");
 
         GameData data = new GameData();
+        
+        if(highscore >= data.highscore)
+        {
+            data.highscore = highscore;
+        }
 
-        data.highscore = score;
+        data.galacticCredits += ((int)credits + currentGalacticCredits);
 
         bf.Serialize(file, data);
 
@@ -356,7 +361,7 @@ public class GameManager : MonoBehaviour {
 
     public void Load()
     {
-        if(File.Exists(Application.persistentDataPath + "/gameInfo.dat"))
+        if (File.Exists(Application.persistentDataPath + "/gameInfo.dat"))
         {
             BinaryFormatter bf = new BinaryFormatter();
             FileStream file = File.Open(Application.persistentDataPath + "/gameInfo.dat", FileMode.Open);
@@ -364,10 +369,13 @@ public class GameManager : MonoBehaviour {
             GameData data = (GameData)bf.Deserialize(file);
 
             highscore = data.highscore;
+            currentGalacticCredits = data.galacticCredits;
+
+            file.Close();
         }
         else
         {
-            Debug.Log("Highscore load failed.");
+            Debug.Log("Highscore and credits load failed.");
         }
     }
 
@@ -381,10 +389,12 @@ public class GameManager : MonoBehaviour {
             GameData data = (GameData)bf.Deserialize(file);
 
             shipTypeIndex = data.shipTypeIndex;
+
+            file.Close();
         }
         else
         {
-            Debug.Log("Ship type load failed. Attempting to set to default.");
+            Debug.Log("Ship type load failed. Setting to default.");
             shipTypeIndex = 1;
         }
     }
@@ -393,7 +403,7 @@ public class GameManager : MonoBehaviour {
     IEnumerator SaucerSpawn()
     {
         // Wait before next spawn...
-        for(float timer = saucerSpawnRate; timer >= 0; timer -= Time.deltaTime)
+        for (float timer = saucerSpawnRate; timer >= 0; timer -= Time.deltaTime)
         {
             yield return null;
         }
@@ -401,29 +411,29 @@ public class GameManager : MonoBehaviour {
         // We pick a random corner of the screen..
         int cornerSelection = UnityEngine.Random.Range(0, 4);
 
-        Vector3 saucerSpawnPos = new Vector3(0,0,0);
+        Vector3 saucerSpawnPos = new Vector3(0, 0, 0);
 
         // Then depending on the random choice, we spawn the next Saucer there.
-        if(cornerSelection == 0)
+        if (cornerSelection == 0)
         {
             saucerSpawnPos = new Vector3(screenSW.x, screenSW.y, 0);
         }
-        else if(cornerSelection == 1)
+        else if (cornerSelection == 1)
         {
             saucerSpawnPos = new Vector3(screenSE.x, screenSE.y, 0);
         }
-        else if(cornerSelection == 2)
+        else if (cornerSelection == 2)
         {
             saucerSpawnPos = new Vector3(screenNE.x, screenNE.y, 0);
         }
-        else if(cornerSelection == 3)
+        else if (cornerSelection == 3)
         {
             saucerSpawnPos = new Vector3(screenNW.x, screenNW.y, 0);
         }
 
         // Instantiate a clone object at the previously selected corner.
         GameObject saucerClone = Instantiate(saucerPrefab, saucerSpawnPos, Quaternion.identity) as GameObject;
-        saucerClone.GetComponent<Saucer>().SetGameManager(this.gameObject);
+        saucerClone.GetComponent<Saucer>().SetGameManager(gameObject);
 
         // Then depending on the corner, we rotate the Saucer to prevent it from shooting off into space!
         if (cornerSelection == 0)
@@ -446,7 +456,7 @@ public class GameManager : MonoBehaviour {
         // Restart the Coroutine that is already running so Saucers are always respawning.
         StartCoroutine(SaucerSpawn());
     }
-    
+
     IEnumerator GameStart()
     {
         // Set the proper UI's to display.
@@ -475,7 +485,7 @@ public class GameManager : MonoBehaviour {
         ShipTypeSet(shipTypeIndex);
 
         // Set the GameManager to this object so we can keep a leash on it.
-        spaceship.SetGameManager(this.gameObject);
+        spaceship.SetGameManager(gameObject);
 
         // "for" loop that spawns the number of Rocks you set into the scene.
         for (int i = 0; i < numStartingRocks; i++)
@@ -489,7 +499,7 @@ public class GameManager : MonoBehaviour {
             GameObject rockClone = Instantiate(startingRockPrefab, new Vector3(rockPosX, rockPosy, 0), Quaternion.identity) as GameObject;
 
             // Set the GameManager of this object to the GameManager in the game, so we can control this Rock.
-            rockClone.GetComponent<Rock>().SetGameManager(this.gameObject);
+            rockClone.GetComponent<Rock>().SetGameManager(gameObject);
         }
 
         // TODO: ScreenSE and ScreenNW are incorrectly named. Change in the future.
@@ -501,6 +511,7 @@ public class GameManager : MonoBehaviour {
         // Begin the Coroutines that add a large part of the functionality to the game.
         StartCoroutine(SaucerSpawn());
         StartCoroutine(PowerupSpawn());
+        StartCoroutine(RockSpawn());
 
         // Since Coroutines always need a "yield return" to know when they are done..
         yield return null;
@@ -513,6 +524,8 @@ public class GameManager : MonoBehaviour {
         gameOverUI.SetActive(true);
         pauseMenuUI.SetActive(false);
 
+        //Cursor.visible = true;
+
         // Set the game state to the game over part of the game.
         state = gameState.gameOver;
 
@@ -520,25 +533,54 @@ public class GameManager : MonoBehaviour {
         //finalScoreText.GetComponent<GUIText>().text = "Final Score: " + score;
         finalScoreText.GetComponent<Text>().text = "Final Score: " + score;
 
+        credits = score / 4;
+        credits = Math.Round((decimal)(score / 4), 0, MidpointRounding.AwayFromZero);
+
+        galacticCreditsText.GetComponent<Text>().text = "Earned Credits: " + credits;
+
         // Destroy this instance of "player" a new one will be spawned on restart.
         Destroy(player);
 
         // Stop Coroutines that are currently running, SaucerSpawn() and PowerupSpawn() included.
         StopAllCoroutines();
 
-        // TODO: Maybe don't need this?
-        if (score >= highscore)
-        {
-            highscore = score;
-
-            Save();
-        }
+        // Saves the highscore, if there is one, and also saves credits earned that round.
+        Save();
 
         // Reset the score values to the original values. They are updated later when GameStart() is called.
         score = startingScore;
         playerLives = startingLives;
 
         // Yield return to end the Coroutine.
+        yield return null;
+    }
+
+    IEnumerator GameRestart()
+    {
+        // Creates an array of the leftover Rocks in the scene, and destroys them. Finds using Unity Tags.
+        GameObject[] rocksToDestroy = GameObject.FindGameObjectsWithTag("Rock");
+
+        /* Starting int "i" equals zero (represents the current Rock in the array) and until
+            that int is at a value less than the length of the rocksToDestroy array, destroy the
+            current Rock in the for loop. */
+
+        for (int i = 0; i < rocksToDestroy.Length; i++)
+        {
+            Destroy(rocksToDestroy[i]);
+        }
+
+        // Creates an array just like the rocksToDestroy array, but for powerups.
+        GameObject[] powerupsToDestroy = GameObject.FindGameObjectsWithTag("Powerup");
+
+        // The for loop also functions in the same fashion.
+        for (int i = 0; i < powerupsToDestroy.Length; i++)
+        {
+            Destroy(powerupsToDestroy[i]);
+        }
+
+        // When all that is finally done getting cleaned up, restart the game.
+        StartCoroutine(GameStart());
+
         yield return null;
     }
 
@@ -556,42 +598,66 @@ public class GameManager : MonoBehaviour {
 
         // These next lines instantiate a prefab based on the random choice made by randomPowerUp.
         // Shield Powerup
-        if(randomPowerUp == 0)
+        if (randomPowerUp == 0)
         {
             GameObject shieldPowerupClone = Instantiate(shieldPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
-            shieldPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            shieldPowerupClone.GetComponent<Powerup>().SetGameManager(gameObject);
         }
 
         // Enhanced Bullet Powerup
         if (randomPowerUp == 1)
         {
             GameObject bulletPowerupClone = Instantiate(bulletPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
-            bulletPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            bulletPowerupClone.GetComponent<Powerup>().SetGameManager(gameObject);
         }
 
         // Ship Control Powerup
         if (randomPowerUp == 2)
         {
             GameObject shipControlPowerupClone = Instantiate(shipControlPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
-            shipControlPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            shipControlPowerupClone.GetComponent<Powerup>().SetGameManager(gameObject);
         }
 
         // Double-Shot Powerup
         if (randomPowerUp == 3)
         {
             GameObject doubleShotPowerupClone = Instantiate(doubleShotPowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
-            doubleShotPowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            doubleShotPowerupClone.GetComponent<Powerup>().SetGameManager(gameObject);
         }
 
         // Life Powerup
         if (randomPowerUp == 4)
         {
             GameObject addLifePowerupClone = Instantiate(addLifePowerupPrefab, new Vector3(powerupPosX, powerupPosY, 0), Quaternion.identity) as GameObject;
-            addLifePowerupClone.GetComponent<Powerup>().SetGameManager(this.gameObject);
+            addLifePowerupClone.GetComponent<Powerup>().SetGameManager(gameObject);
         }
 
         // Like the Saucers spawning, we need powerups to continually spawn.
         StartCoroutine(PowerupSpawn());
+    }
+
+    IEnumerator RockSpawn()
+    {
+        float rockSpawnTimer = 10.0f;
+
+        for (float timer = rockSpawnTimer; timer >= 0; timer -= Time.deltaTime)
+        {
+            yield return null;
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            float rockPosX = rockSpawnRadius * Mathf.Cos(UnityEngine.Random.Range(0, 360));
+            float rockPosy = rockSpawnRadius * Mathf.Sin(UnityEngine.Random.Range(0, 360));
+
+            GameObject rockClone = Instantiate(startingRockPrefab, new Vector3(rockPosX, rockPosy, 0), Quaternion.identity) as GameObject;
+
+            rockClone.GetComponent<Rock>().SetGameManager(gameObject);
+        }
+
+        rockSpawnTimer -= 2.0f;
+        Debug.Log(rockSpawnTimer);
+        StartCoroutine(RockSpawn());
     }
 
     void GamePaused()
@@ -622,6 +688,7 @@ public class GameManager : MonoBehaviour {
         Cursor.visible = false;
     }
 
+    // TODO: Add button click noise.
     public void ResumeButtonClick()
     {
         state = gameState.game;
@@ -631,12 +698,14 @@ public class GameManager : MonoBehaviour {
     {
         Application.LoadLevel("MainMenu");
     }
-}
 
-[Serializable]
-public class GameData
-{
-    public int highscore;
+    public void RespawnButtonClick()
+    {
+        StartCoroutine(GameRestart());
+    }
 
-    public int shipTypeIndex;
+    public void QuitButtonClick()
+    {
+        Application.Quit();
+    }
 }
